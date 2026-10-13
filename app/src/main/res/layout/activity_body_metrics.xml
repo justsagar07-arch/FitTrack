@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:background="@color/background_light">
+
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:orientation="vertical"
+
+        android:padding="20dp">
+
+
+        <!-- ========================================= -->
+        <!-- HEADER -->
+        <!-- ========================================= -->
+
+        <LinearLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:gravity="center_vertical">
+
+            <ImageButton
+
+                android:id="@+id/btn_back"
+
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+
+                android:background="?attr/selectableItemBackgroundBorderless"
+
+                android:src="@drawable/ic_person"
+
+                app:tint="@color/text_primary_light"
+
+                android:contentDescription="Back" />
+
+
+            <TextView
+
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+
+                android:layout_weight="1"
+
+                android:gravity="center"
+
+                android:text="Body Analysis"
+
+                android:textColor="@color/text_primary_light"
+
+                android:textSize="22sp"
+
+                android:textStyle="bold" />
+
+
+            <View
+
+                android:layout_width="44dp"
+                android:layout_height="44dp" />
+
+        </LinearLayout>
+
+
+        <!-- ========================================= -->
+        <!-- SUBTITLE -->
+        <!-- ========================================= -->
+
+        <TextView
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="16dp"
+
+            android:text="Your current body metrics"
+
+            android:textColor="@color/text_secondary_light"
+
+            android:textSize="14sp" />
+
+
+        <!-- ========================================= -->
+        <!-- HEIGHT -->
+        <!-- ========================================= -->
+
+        <com.google.android.material.card.MaterialCardView
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="20dp"
+
+            app:cardCornerRadius="16dp"
+            app:cardElevation="3dp">
+
+            <LinearLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:orientation="horizontal"
+
+                android:gravity="center_vertical"
+
+                android:padding="20dp">
+
+                <TextView
+
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+
+                    android:layout_weight="1"
+
+                    android:text="Height"
+
+                    android:textColor="@color/text_secondary_light"
+
+                    android:textSize="15sp" />
+
+                <TextView
+
+                    android:id="@+id/tv_height"
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:text="-- cm"
+
+                    android:textColor="@color/text_primary_light"
+
+                    android:textSize="20sp"
+
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+        <!-- ========================================= -->
+        <!-- WEIGHT -->
+        <!-- ========================================= -->
+
+        <com.google.android.material.card.MaterialCardView
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="12dp"
+
+            app:cardCornerRadius="16dp"
+            app:cardElevation="3dp">
+
+            <LinearLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:orientation="horizontal"
+
+                android:gravity="center_vertical"
+
+                android:padding="20dp">
+
+                <TextView
+
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+
+                    android:layout_weight="1"
+
+                    android:text="Weight"
+
+                    android:textColor="@color/text_secondary_light"
+
+                    android:textSize="15sp" />
+
+                <TextView
+
+                    android:id="@+id/tv_weight"
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:text="-- kg"
+
+                    android:textColor="@color/text_primary_light"
+
+                    android:textSize="20sp"
+
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+        <!-- ========================================= -->
+        <!-- AGE -->
+        <!-- ========================================= -->
+
+        <com.google.android.material.card.MaterialCardView
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="12dp"
+
+            app:cardCornerRadius="16dp"
+            app:cardElevation="3dp">
+
+            <LinearLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:orientation="horizontal"
+
+                android:gravity="center_vertical"
+
+                android:padding="20dp">
+
+                <TextView
+
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+
+                    android:layout_weight="1"
+
+                    android:text="Age"
+
+                    android:textColor="@color/text_secondary_light"
+
+                    android:textSize="15sp" />
+
+                <TextView
+
+                    android:id="@+id/tv_age"
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:text="--"
+
+                    android:textColor="@color/text_primary_light"
+
+                    android:textSize="20sp"
+
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+        <!-- ========================================= -->
+        <!-- BMI -->
+        <!-- ========================================= -->
+
+        <com.google.android.material.card.MaterialCardView
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="12dp"
+
+            app:cardCornerRadius="16dp"
+            app:cardElevation="3dp">
+
+            <LinearLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:orientation="horizontal"
+
+                android:gravity="center_vertical"
+
+                android:padding="20dp">
+
+                <TextView
+
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+
+                    android:layout_weight="1"
+
+                    android:text="BMI"
+
+                    android:textColor="@color/text_secondary_light"
+
+                    android:textSize="15sp" />
+
+                <TextView
+
+                    android:id="@+id/tv_bmi"
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:text="--"
+
+                    android:textColor="@color/card_analysis"
+
+                    android:textSize="20sp"
+
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+        <!-- ========================================= -->
+        <!-- BMR -->
+        <!-- ========================================= -->
+
+        <com.google.android.material.card.MaterialCardView
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="12dp"
+
+            app:cardCornerRadius="16dp"
+            app:cardElevation="3dp">
+
+            <LinearLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:orientation="horizontal"
+
+                android:gravity="center_vertical"
+
+                android:padding="20dp">
+
+                <TextView
+
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+
+                    android:layout_weight="1"
+
+                    android:text="BMR"
+
+                    android:textColor="@color/text_secondary_light"
+
+                    android:textSize="15sp" />
+
+                <TextView
+
+                    android:id="@+id/tv_bmr"
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:text="-- kcal/day"
+
+                    android:textColor="@color/card_analysis"
+
+                    android:textSize="18sp"
+
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+        <!-- ========================================= -->
+        <!-- BMI & BMR INFORMATION -->
+        <!-- ========================================= -->
+
+        <com.google.android.material.card.MaterialCardView
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="20dp"
+
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp">
+
+            <LinearLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:orientation="vertical"
+
+                android:padding="20dp">
+
+                <TextView
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:text="BMI &amp; BMR Information"
+
+                    android:textColor="@color/text_primary_light"
+
+                    android:textSize="18sp"
+
+                    android:textStyle="bold" />
+
+                <TextView
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginTop="8dp"
+
+                    android:text="BMI is calculated from your height and weight. BMR estimates the calories your body needs at rest."
+
+                    android:textColor="@color/text_secondary_light"
+
+                    android:textSize="13sp" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+        <!-- ========================================= -->
+        <!-- ADVANCED BODY ANALYSIS BUTTON -->
+        <!-- ========================================= -->
+
+        <com.google.android.material.button.MaterialButton
+
+            android:id="@+id/btn_advanced_analysis"
+
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+
+            android:layout_marginTop="24dp"
+
+            android:text="Advanced Body Analysis"
+
+            android:textSize="16sp"
+
+            android:textStyle="bold"
+
+            android:backgroundTint="@color/primary_blue"
+
+            app:cornerRadius="14dp" />
+
+
+    </LinearLayout>
+
+</ScrollView>

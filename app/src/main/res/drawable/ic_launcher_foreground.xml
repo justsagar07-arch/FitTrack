@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Shield Drop Shadow -->
+    <path
+        android:fillColor="#33000000"
+        android:pathData="M 55,28 Q 43,26 31,31 L 31,58 Q 31,78 55,90 Q 79,78 79,58 L 79,31 Q 67,26 55,28 Z" />
+
+    <!-- Shield Left Facet (Vibrant Lime Green) -->
+    <path
+        android:fillColor="#CCFF00"
+        android:pathData="M 54,26 Q 42,24 30,29 L 30,56 Q 30,76 54,88 Z" />
+
+    <!-- Shield Right Facet (Shaded Lime Green) -->
+    <path
+        android:fillColor="#A3D900"
+        android:pathData="M 54,26 Q 66,24 78,29 L 78,56 Q 78,76 54,88 Z" />
+
+    <!-- Athlete Head Shadow -->
+    <path
+        android:fillColor="#26000000"
+        android:pathData="M 50,28 A 3,3 0 1 1 50,22 A 3,3 0 1 1 50,28" />
+
+    <!-- Athlete Head (Pulse Line Peak Integration) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M 49,26 A 3,3 0 1 1 49,20 A 3,3 0 1 1 49,26" />
+
+    <!-- Pulse Line Drop Shadow -->
+    <path
+        android:strokeColor="#26000000"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M 24,59 L 40,59 L 44,64 L 49,36 L 54,80 L 59,52 L 63,59 L 84,59" />
+
+    <!-- Pulse Line (Crisp White) -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M 24,57 L 40,57 L 44,62 L 49,34 L 54,78 L 59,50 L 63,57 L 84,57" />
+
+</vector>

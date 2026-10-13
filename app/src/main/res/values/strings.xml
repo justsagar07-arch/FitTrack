@@ -1,0 +1,66 @@
+<resources>
+    <string name="app_name">FitTrack</string>
+    <string name="login_title">Login to FitTrack</string>
+    <string name="signup_title">Create Account</string>
+    <string name="forgot_password_title">Forgot Password</string>
+    <string name="email_hint">Email</string>
+    <string name="username_hint">Username</string>
+    <string name="password_hint">Password</string>
+    <string name="confirm_password_hint">Confirm Password</string>
+    <string name="full_name_hint">Full Name</string>
+    <string name="remember_me">Remember Me</string>
+    <string name="login_button">Login</string>
+    <string name="signup_button">Sign Up</string>
+    <string name="reset_password_button">Reset Password</string>
+    <string name="forgot_password_link">Forgot Password?</string>
+    <string name="no_account_link">Don\'t have an account? Sign Up</string>
+    <string name="already_have_account_link">Already have an account? Login</string>
+    <string name="error_invalid_email">Invalid email format</string>
+    <string name="error_empty_field">This field cannot be empty</string>
+    <string name="error_password_mismatch">Passwords do not match</string>
+    <string name="reset_success_message">Reset link sent to your email</string>
+    <string name="onboarding_title">Your Health, Optimized</string>
+    <string name="onboarding_description">FitTrack needs access to your activity and health data to provide personalized insights and tracking.</string>
+    <string name="health_data_steps">Steps &amp; Activity</string>
+    <string name="health_data_steps_desc">Track your daily steps and physical activity automatically.</string>
+    <string name="health_data_calories">Calories Burned</string>
+    <string name="health_data_calories_desc">Monitor energy expenditure throughout your day.</string>
+    <string name="health_data_heart">Heart Rate</string>
+    <string name="health_data_heart_desc">View real-time heart rate data from your body sensors.</string>
+    <string name="grant_permissions">Grant Permissions</string>
+    <string name="skip_for_now">Skip for Now</string>
+    <string name="onboarding_placeholder">Welcome to FitTrack!</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_analysis">Analysis</string>
+    <string name="nav_workout">Workout</string>
+    <string name="nav_diet">Diet</string>
+    <string name="nav_profile">Profile</string>
+
+    <!-- Home Dashboard -->
+    <string name="greeting_user">Hello, User!</string>
+    <string name="steps_summary">Daily Steps</string>
+    <string name="calories_summary">Calories Burned</string>
+    <string name="heart_rate_summary">Heart Rate</string>
+    <string name="body_analysis">Body Analysis</string>
+    <string name="ai_assistant">AI Assistant</string>
+    <string name="exercises">Exercises</string>
+    <string name="diet_plan">Diet Plan</string>
+    <string name="reminders">Reminders</string>
+    <string name="about_us">About Us</string>
+    <string name="calories_value_format">%1$d kcal</string>
+    <string name="heart_rate_value_format">%1$d BPM</string>
+    <!-- Diet Section -->
+    <string name="calorie_summary_title">Daily Calorie Summary</string>
+    <string name="remaining_label">Remaining</string>
+    <string name="target_label">Target</string>
+    <string name="consumed_label">Consumed</string>
+    <string name="burned_label">Burned</string>
+    <string name="meal_suggestions_title">Meal Suggestions</string>
+    <string name="water_reminder_title">Water Reminder</string>
+    <string name="water_progress_format">%1$d of %2$d glasses target</string>
+    <string name="add_water_button">+ Add</string>
+    <string name="log_button">Log</string>
+    <string name="logged_button">Logged</string>
+</resources>

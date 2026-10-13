@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary_blue">#1A237E</color>
+    <color name="primary_blue_light">#534BAE</color>
+    <color name="primary_blue_dark">#000051</color>
+
+    <color name="accent_green">#00E676</color>
+
+    <color name="background_light">#F5F5F5</color>
+    <color name="surface_light">#FFFFFF</color>
+
+    <color name="background_dark">#121212</color>
+    <color name="surface_dark">#1E1E1E</color>
+
+    <color name="text_primary_light">#212121</color>
+    <color name="text_secondary_light">#757575</color>
+
+    <color name="text_primary_dark">#FFFFFF</color>
+    <color name="text_secondary_dark">#BDBDBD</color>
+
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="card_steps">#FF7043</color>
+    <color name="card_calories">#FFCA28</color>
+    <color name="card_heart">#EC407A</color>
+    <color name="card_analysis">#42A5F5</color>
+    <color name="card_ai">#AB47BC</color>
+    <color name="card_workout">#66BB6A</color>
+    <color name="card_diet">#FFA726</color>
+    <color name="card_reminders">#26A69A</color>
+    <color name="card_about">#78909C</color>
+    <color name="healthy_green">#00C853</color>
+    <color name="healthy_orange">#FF6D00</color>
+    <color name="water_blue">#2196F3</color>
+    <color name="calorie_background">#E8F5E9</color>
+    <color name="progress_empty">#E0E0E0</color>
+    <color name="chat_ai_bubble">#EFEFEF</color>
+    <color name="chat_ai_text">#333333</color>
+</resources>

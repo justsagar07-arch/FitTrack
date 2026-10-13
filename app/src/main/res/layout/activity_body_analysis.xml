@@ -1,0 +1,952 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
+
+    <!-- ========================================================= -->
+    <!-- CAMERA PREVIEW -->
+    <!-- ========================================================= -->
+
+    <androidx.camera.view.PreviewView
+        android:id="@+id/preview_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+    <!-- ========================================================= -->
+    <!-- CAMERA HEADER -->
+    <!-- ========================================================= -->
+
+    <LinearLayout
+        android:id="@+id/layout_camera_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:orientation="horizontal"
+        android:padding="16dp"
+
+        android:background="#A6000000"
+        android:gravity="center_vertical"
+
+        android:layout_alignParentTop="true">
+
+        <ImageButton
+            android:id="@+id/btn_back"
+
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+
+            android:src="@drawable/ic_person"
+
+            android:background="?attr/selectableItemBackgroundBorderless"
+
+            app:tint="@color/white"
+
+            android:importantForAccessibility="yes"
+            android:contentDescription="Go Back" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="AI Body Composition Analysis"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+
+            android:layout_marginStart="16dp" />
+
+    </LinearLayout>
+
+
+    <!-- ========================================================= -->
+    <!-- SCANNER OVERLAY -->
+    <!-- ========================================================= -->
+
+    <RelativeLayout
+        android:id="@+id/layout_scanner_overlay"
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:layout_below="@id/layout_camera_header"
+        android:layout_above="@+id/layout_camera_controls">
+
+
+        <!-- Target Frame -->
+
+        <View
+            android:id="@+id/view_target_frame"
+
+            android:layout_width="280dp"
+            android:layout_height="420dp"
+
+            android:layout_centerInParent="true"
+
+            android:background="@android:color/transparent" />
+
+
+        <!-- Instructions -->
+
+        <TextView
+            android:id="@+id/text_instructions"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_above="@id/view_target_frame"
+            android:layout_centerHorizontal="true"
+
+            android:layout_marginBottom="16dp"
+
+            android:text="Align your full body within the frame"
+
+            android:textColor="@color/accent_green"
+            android:textSize="14sp"
+            android:textStyle="bold"
+
+            android:background="#CC000000"
+
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp" />
+
+
+        <!-- Scanning Progress -->
+
+        <ProgressBar
+            android:id="@+id/progress_scanning_bar"
+
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+
+            android:layout_width="260dp"
+            android:layout_height="4dp"
+
+            android:layout_centerInParent="true"
+
+            android:indeterminate="true"
+
+            android:indeterminateTint="@color/accent_green"
+
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+
+    <!-- ========================================================= -->
+    <!-- CAMERA CONTROLS -->
+    <!-- ========================================================= -->
+
+    <LinearLayout
+        android:id="@+id/layout_camera_controls"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:orientation="vertical"
+        android:gravity="center"
+
+        android:padding="24dp"
+
+        android:background="#A6000000"
+
+        android:layout_alignParentBottom="true">
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_capture"
+
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+
+            android:backgroundTint="@color/white"
+
+            app:shapeAppearanceOverlay="@style/Widget.Material3.CircularProgressIndicator"
+
+            app:icon="@drawable/ic_analysis"
+            app:iconSize="36dp"
+            app:iconTint="@color/primary_blue"
+            app:iconGravity="textStart"
+
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:insetLeft="0dp"
+            android:insetRight="0dp"
+
+            android:padding="0dp"
+
+            android:importantForAccessibility="yes"
+            android:contentDescription="Capture Photo" />
+
+    </LinearLayout>
+
+
+    <!-- ========================================================= -->
+    <!-- RESULTS OVERLAY -->
+    <!-- ========================================================= -->
+
+    <ScrollView
+        android:id="@+id/layout_results_overlay"
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:background="#F0121212"
+
+        android:visibility="gone"
+
+        android:fillViewport="true">
+
+
+        <LinearLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:orientation="vertical"
+
+            android:padding="24dp"
+
+            android:gravity="center_horizontal">
+
+
+            <!-- ================================================= -->
+            <!-- ANALYSIS ICON -->
+            <!-- ================================================= -->
+
+            <ImageView
+
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+
+                android:src="@drawable/ic_analysis"
+
+                app:tint="@color/accent_green"
+
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="12dp"
+
+                android:importantForAccessibility="no" />
+
+
+            <!-- ================================================= -->
+            <!-- TITLE -->
+            <!-- ================================================= -->
+
+            <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="Analysis Complete"
+
+                android:textColor="@color/white"
+
+                android:textSize="24sp"
+
+                android:textStyle="bold"
+
+                android:layout_marginBottom="4dp" />
+
+
+            <!-- ================================================= -->
+            <!-- DISCLAIMER -->
+            <!-- ================================================= -->
+
+            <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="* Values are intelligent computer vision estimates"
+
+                android:textColor="#FFB300"
+
+                android:textSize="12sp"
+
+                android:textStyle="italic"
+
+                android:layout_marginBottom="24dp" />
+
+
+            <!-- ================================================= -->
+            <!-- RESULT CARDS -->
+            <!-- ================================================= -->
+
+            <LinearLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:orientation="vertical"
+
+                android:layout_marginBottom="24dp">
+
+
+                <!-- ================================================= -->
+                <!-- WEIGHT -->
+                <!-- ================================================= -->
+
+                <com.google.android.material.card.MaterialCardView
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginBottom="12dp"
+
+                    app:cardCornerRadius="12dp"
+                    app:cardBackgroundColor="@color/surface_dark"
+                    app:strokeWidth="0dp">
+
+                    <RelativeLayout
+
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:padding="16dp">
+
+
+                        <TextView
+
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+
+                            android:text="Weight"
+
+                            android:textColor="@color/text_secondary_dark"
+
+                            android:textSize="14sp"
+
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true" />
+
+
+                        <TextView
+
+                            android:id="@+id/text_result_weight"
+
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+
+                            android:text="-- kg"
+
+                            android:textColor="@color/white"
+
+                            android:textSize="16sp"
+
+                            android:textStyle="bold"
+
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true" />
+
+                    </RelativeLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+
+                <!-- ================================================= -->
+                <!-- HEIGHT -->
+                <!-- ================================================= -->
+
+                <com.google.android.material.card.MaterialCardView
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginBottom="12dp"
+
+                    app:cardCornerRadius="12dp"
+                    app:cardBackgroundColor="@color/surface_dark"
+                    app:strokeWidth="0dp">
+
+                    <RelativeLayout
+
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:padding="16dp">
+
+
+                        <TextView
+
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+
+                            android:text="Height"
+
+                            android:textColor="@color/text_secondary_dark"
+
+                            android:textSize="14sp"
+
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true" />
+
+
+                        <TextView
+
+                            android:id="@+id/text_result_height"
+
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+
+                            android:text="-- cm"
+
+                            android:textColor="@color/white"
+
+                            android:textSize="16sp"
+
+                            android:textStyle="bold"
+
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true" />
+
+                    </RelativeLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+
+                <!-- ================================================= -->
+                <!-- BMI -->
+                <!-- ================================================= -->
+
+                <com.google.android.material.card.MaterialCardView
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginBottom="12dp"
+
+                    app:cardCornerRadius="12dp"
+                    app:cardBackgroundColor="@color/surface_dark"
+                    app:strokeWidth="0dp">
+
+                    <RelativeLayout
+
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:padding="16dp">
+
+
+                        <TextView
+
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+
+                            android:text="Body Mass Index (BMI)"
+
+                            android:textColor="@color/text_secondary_dark"
+
+                            android:textSize="14sp"
+
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true" />
+
+
+                        <TextView
+
+                            android:id="@+id/text_result_bmi"
+
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+
+                            android:text="--"
+
+                            android:textColor="@color/accent_green"
+
+                            android:textSize="16sp"
+
+                            android:textStyle="bold"
+
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true" />
+
+                    </RelativeLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+
+                <!-- ================================================= -->
+                <!-- BODY FAT -->
+                <!-- ================================================= -->
+
+                <com.google.android.material.card.MaterialCardView
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginBottom="12dp"
+
+                    app:cardCornerRadius="12dp"
+                    app:cardBackgroundColor="@color/surface_dark"
+                    app:strokeWidth="0dp">
+
+                    <RelativeLayout
+
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:padding="16dp">
+
+
+                        <TextView
+
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+
+                            android:text="Body Fat Percentage"
+
+                            android:textColor="@color/text_secondary_dark"
+
+                            android:textSize="14sp"
+
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true" />
+
+
+                        <TextView
+
+                            android:id="@+id/text_result_body_fat"
+
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+
+                            android:text="--%"
+
+                            android:textColor="@color/white"
+
+                            android:textSize="16sp"
+
+                            android:textStyle="bold"
+
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true" />
+
+                    </RelativeLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+
+                <!-- ================================================= -->
+                <!-- MUSCLE MASS -->
+                <!-- ================================================= -->
+
+                <com.google.android.material.card.MaterialCardView
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginBottom="12dp"
+
+                    app:cardCornerRadius="12dp"
+                    app:cardBackgroundColor="@color/surface_dark"
+                    app:strokeWidth="0dp">
+
+                    <RelativeLayout
+
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:padding="16dp">
+
+
+                        <TextView
+
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+
+                            android:text="Lean Muscle Mass"
+
+                            android:textColor="@color/text_secondary_dark"
+
+                            android:textSize="14sp"
+
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true" />
+
+
+                        <TextView
+
+                            android:id="@+id/text_result_muscle"
+
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+
+                            android:text="-- kg"
+
+                            android:textColor="@color/white"
+
+                            android:textSize="16sp"
+
+                            android:textStyle="bold"
+
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true" />
+
+                    </RelativeLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+
+                <!-- ================================================= -->
+                <!-- BODY WATER -->
+                <!-- ================================================= -->
+
+                <com.google.android.material.card.MaterialCardView
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginBottom="12dp"
+
+                    app:cardCornerRadius="12dp"
+                    app:cardBackgroundColor="@color/surface_dark"
+                    app:strokeWidth="0dp">
+
+                    <RelativeLayout
+
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:padding="16dp">
+
+
+                        <TextView
+
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+
+                            android:text="Body Water"
+
+                            android:textColor="@color/text_secondary_dark"
+
+                            android:textSize="14sp"
+
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true" />
+
+
+                        <TextView
+
+                            android:id="@+id/text_result_body_water"
+
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+
+                            android:text="--%"
+
+                            android:textColor="@color/white"
+
+                            android:textSize="16sp"
+
+                            android:textStyle="bold"
+
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true" />
+
+                    </RelativeLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+
+                <!-- ================================================= -->
+                <!-- VISCERAL FAT -->
+                <!-- ================================================= -->
+
+                <com.google.android.material.card.MaterialCardView
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginBottom="12dp"
+
+                    app:cardCornerRadius="12dp"
+                    app:cardBackgroundColor="@color/surface_dark"
+                    app:strokeWidth="0dp">
+
+                    <RelativeLayout
+
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:padding="16dp">
+
+
+                        <TextView
+
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+
+                            android:text="Visceral Fat"
+
+                            android:textColor="@color/text_secondary_dark"
+
+                            android:textSize="14sp"
+
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true" />
+
+
+                        <TextView
+
+                            android:id="@+id/text_result_visceral_fat"
+
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+
+                            android:text="--"
+
+                            android:textColor="@color/white"
+
+                            android:textSize="16sp"
+
+                            android:textStyle="bold"
+
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true" />
+
+                    </RelativeLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+
+                <!-- ================================================= -->
+                <!-- BMR -->
+                <!-- ================================================= -->
+
+                <com.google.android.material.card.MaterialCardView
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginBottom="12dp"
+
+                    app:cardCornerRadius="12dp"
+                    app:cardBackgroundColor="@color/surface_dark"
+                    app:strokeWidth="0dp">
+
+                    <RelativeLayout
+
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:padding="16dp">
+
+
+                        <TextView
+
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+
+                            android:text="BMR"
+
+                            android:textColor="@color/text_secondary_dark"
+
+                            android:textSize="14sp"
+
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true" />
+
+
+                        <TextView
+
+                            android:id="@+id/text_result_bmr"
+
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+
+                            android:text="-- kcal/day"
+
+                            android:textColor="@color/white"
+
+                            android:textSize="16sp"
+
+                            android:textStyle="bold"
+
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true" />
+
+                    </RelativeLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+
+                <!-- ================================================= -->
+                <!-- METABOLIC AGE -->
+                <!-- ================================================= -->
+
+                <com.google.android.material.card.MaterialCardView
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginBottom="12dp"
+
+                    app:cardCornerRadius="12dp"
+                    app:cardBackgroundColor="@color/surface_dark"
+                    app:strokeWidth="0dp">
+
+                    <RelativeLayout
+
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:padding="16dp">
+
+
+                        <TextView
+
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+
+                            android:text="Metabolic Age"
+
+                            android:textColor="@color/text_secondary_dark"
+
+                            android:textSize="14sp"
+
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true" />
+
+
+                        <TextView
+
+                            android:id="@+id/text_result_metabolic_age"
+
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+
+                            android:text="-- years"
+
+                            android:textColor="@color/white"
+
+                            android:textSize="16sp"
+
+                            android:textStyle="bold"
+
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true" />
+
+                    </RelativeLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+
+                <!-- ================================================= -->
+                <!-- PHYSIQUE -->
+                <!-- ================================================= -->
+
+                <com.google.android.material.card.MaterialCardView
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginBottom="12dp"
+
+                    app:cardCornerRadius="12dp"
+                    app:cardBackgroundColor="@color/surface_dark"
+                    app:strokeWidth="0dp">
+
+                    <RelativeLayout
+
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:padding="16dp">
+
+
+                        <TextView
+
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+
+                            android:text="Physique Classification"
+
+                            android:textColor="@color/text_secondary_dark"
+
+                            android:textSize="14sp"
+
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true" />
+
+
+                        <TextView
+
+                            android:id="@+id/text_result_physique"
+
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+
+                            android:text="--"
+
+                            android:textColor="@color/card_analysis"
+
+                            android:textSize="16sp"
+
+                            android:textStyle="bold"
+
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true" />
+
+                    </RelativeLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+
+            <!-- ================================================= -->
+            <!-- SAVE BUTTON -->
+            <!-- ================================================= -->
+
+            <com.google.android.material.button.MaterialButton
+
+                android:id="@+id/btn_results_done"
+
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+
+                android:text="Save and Complete"
+
+                android:textSize="16sp"
+                android:textStyle="bold"
+
+                app:cornerRadius="12dp"
+
+                android:backgroundTint="@color/primary_blue"
+
+                android:layout_marginBottom="12dp" />
+
+
+            <!-- ================================================= -->
+            <!-- RETAKE BUTTON -->
+            <!-- ================================================= -->
+
+            <com.google.android.material.button.MaterialButton
+
+                android:id="@+id/btn_results_retake"
+
+                style="@style/Widget.Material3.Button.OutlinedButton"
+
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+
+                android:text="Retake Scan"
+
+                android:textSize="16sp"
+
+                android:textColor="@color/white"
+
+                app:strokeColor="@color/white"
+
+                app:cornerRadius="12dp" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</RelativeLayout>

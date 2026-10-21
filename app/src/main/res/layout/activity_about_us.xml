@@ -4,13 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="?android:attr/windowBackground">
+    android:background="@color/background_light">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:background="@color/primary_blue"
         app:navigationIcon="@drawable/ic_back"
         app:navigationIconTint="@color/white"
         app:title="About FitTrack"
@@ -18,189 +18,433 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="20dp">
 
+            <!-- Title & Tagline -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="FitTrack"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:textColor="@color/primary_blue" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Your Fitness, Your Progress"
+                android:textSize="14sp"
+                android:textStyle="italic"
+                android:textColor="@color/text_secondary_light"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="20dp" />
+
+            <!-- About FitTrack Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                app:cardCornerRadius="16dp"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp"
                 app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/white"
                 app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="20dp">
+                    android:padding="16dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Project Description"
-                        android:textAppearance="?attr/textAppearanceTitleLarge"
-                        android:textColor="?attr/colorPrimary" />
+                        android:text="About FitTrack"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/primary_blue"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="FitTrack is a fitness and wellness application designed to help users build healthy habits and keep track of their daily activities. It brings useful fitness tools together in one place to make monitoring activity, workouts, goals, and nutrition easier."
+                        android:textSize="14sp"
+                        android:textColor="@color/text_primary_light"
+                        android:lineSpacingMultiplier="1.3" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Our Features Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/white"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:text="FitTrack is an all-in-one health and fitness tracking application designed to help you reach your goals. With features like daily step tracking, calorie monitoring, AI-powered health assistance, and personalized workout plans, we make staying healthy easier and more engaging than ever."
-                        android:textAppearance="?attr/textAppearanceBodyMedium"
-                        android:lineSpacingExtra="4dp" />
+                        android:text="Our Features"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/primary_blue"
+                        android:layout_marginBottom="12dp" />
+
+                    <!-- Activity Tracking -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Activity Tracking"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary_light" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Track daily steps and view available health activity information to understand your daily movement."
+                        android:textSize="14sp"
+                        android:textColor="@color/text_secondary_light"
+                        android:lineSpacingMultiplier="1.2"
+                        android:layout_marginBottom="12dp"
+                        android:layout_marginTop="2dp" />
+
+                    <!-- Workout Library -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Workout Library"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary_light" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Explore available exercises and follow workout sessions with set, repetition, and rest-timer support."
+                        android:textSize="14sp"
+                        android:textColor="@color/text_secondary_light"
+                        android:lineSpacingMultiplier="1.2"
+                        android:layout_marginBottom="12dp"
+                        android:layout_marginTop="2dp" />
+
+                    <!-- Workout History -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Workout History"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary_light" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Review completed workout sessions and monitor your progress over time."
+                        android:textSize="14sp"
+                        android:textColor="@color/text_secondary_light"
+                        android:lineSpacingMultiplier="1.2"
+                        android:layout_marginBottom="12dp"
+                        android:layout_marginTop="2dp" />
+
+                    <!-- Goals and Progress -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Goals and Progress"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary_light" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Set personal fitness goals and track your progress toward building consistent, healthy habits."
+                        android:textSize="14sp"
+                        android:textColor="@color/text_secondary_light"
+                        android:lineSpacingMultiplier="1.2"
+                        android:layout_marginBottom="12dp"
+                        android:layout_marginTop="2dp" />
+
+                    <!-- Reminders -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Reminders"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary_light" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Use reminders to help maintain a regular routine for workouts, movement, hydration, meals, and other supported wellness activities."
+                        android:textSize="14sp"
+                        android:textColor="@color/text_secondary_light"
+                        android:lineSpacingMultiplier="1.2"
+                        android:layout_marginBottom="12dp"
+                        android:layout_marginTop="2dp" />
+
+                    <!-- Nutrition Tracking -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Nutrition Tracking"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary_light" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Record food intake and review available nutrition information to become more aware of your eating habits."
+                        android:textSize="14sp"
+                        android:textColor="@color/text_secondary_light"
+                        android:lineSpacingMultiplier="1.2"
+                        android:layout_marginTop="2dp" />
+
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Our Team"
-                android:textAppearance="?attr/textAppearanceTitleMedium"
-                android:textColor="?attr/colorPrimary"
-                android:layout_marginBottom="12dp"
-                android:layout_marginStart="4dp"/>
-
-            <!-- Team Member 1 -->
+            <!-- Our Mission Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
+                android:layout_marginBottom="16dp"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="1dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/white"
                 app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
+                    android:orientation="vertical"
                     android:padding="16dp">
 
-                    <com.google.android.material.imageview.ShapeableImageView
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:src="@drawable/ic_person"
-                        android:padding="8dp"
-                        android:background="#F0F0F0"
-                        app:shapeAppearanceOverlay="@style/CircleShapeAppearance"/>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
+                        android:text="Our Mission"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/primary_blue"
+                        android:layout_marginBottom="8dp" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Sagar B."
-                            android:textAppearance="?attr/textAppearanceTitleMedium" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Our mission is to make fitness tracking simple and accessible, helping users develop consistent habits and make informed choices about their general wellness."
+                        android:textSize="14sp"
+                        android:textColor="@color/text_primary_light"
+                        android:lineSpacingMultiplier="1.3" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Developer"
-                            android:textAppearance="?attr/textAppearanceBodySmall" />
-                    </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Team Member 2 -->
+            <!-- Our Vision Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
+                android:layout_marginBottom="16dp"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="1dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/white"
                 app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
+                    android:orientation="vertical"
                     android:padding="16dp">
 
-                    <com.google.android.material.imageview.ShapeableImageView
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:src="@drawable/ic_person"
-                        android:padding="8dp"
-                        android:background="#F0F0F0"
-                        app:shapeAppearanceOverlay="@style/CircleShapeAppearance"/>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
+                        android:text="Our Vision"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/primary_blue"
+                        android:layout_marginBottom="8dp" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Sagar P."
-                            android:textAppearance="?attr/textAppearanceTitleMedium" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Our vision is to encourage a balanced and active lifestyle through simple tools that support everyday fitness and wellbeing."
+                        android:textSize="14sp"
+                        android:textColor="@color/text_primary_light"
+                        android:lineSpacingMultiplier="1.3" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Front End"
-                            android:textAppearance="?attr/textAppearanceBodySmall" />
-                    </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Team Member 3 -->
+            <!-- Privacy and Data Protection Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
+                android:layout_marginBottom="16dp"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="1dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/white"
                 app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
+                    android:orientation="vertical"
                     android:padding="16dp">
 
-                    <com.google.android.material.imageview.ShapeableImageView
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:src="@drawable/ic_person"
-                        android:padding="8dp"
-                        android:background="#F0F0F0"
-                        app:shapeAppearanceOverlay="@style/CircleShapeAppearance"/>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
+                        android:text="Privacy and Data Protection"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/primary_blue"
+                        android:layout_marginBottom="8dp" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Yash J."
-                            android:textAppearance="?attr/textAppearanceTitleMedium" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="FitTrack aims to handle personal information responsibly. Health and activity information may depend on the permissions granted and the services enabled in the application. Users should review the app's permissions and privacy information to understand how their data is handled."
+                        android:textSize="14sp"
+                        android:textColor="@color/text_primary_light"
+                        android:lineSpacingMultiplier="1.3" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Back End"
-                            android:textAppearance="?attr/textAppearanceBodySmall" />
-                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Health Disclaimer Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/white"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Health Disclaimer"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/primary_blue"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="FitTrack is intended for general fitness and wellness tracking. It does not replace professional medical advice, diagnosis, or treatment. Activity, calorie, BMI, and nutrition values may be estimates and should not be treated as medical conclusions."
+                        android:textSize="14sp"
+                        android:textColor="@color/text_primary_light"
+                        android:lineSpacingMultiplier="1.3" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Our Team Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/white"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Our Team"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/primary_blue"
+                        android:layout_marginBottom="12dp" />
+
+                    <!-- Sagar Prajapati -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sagar Prajapati"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary_light" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Developer and Backend"
+                        android:textSize="14sp"
+                        android:textColor="@color/text_secondary_light"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginBottom="12dp" />
+
+                    <!-- Yash Jadhav -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Yash Jadhav"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary_light" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Front End"
+                        android:textSize="14sp"
+                        android:textColor="@color/text_secondary_light"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginBottom="12dp" />
+
+                    <!-- Sagar Barde -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sagar Barde"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary_light" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="UI Designer"
+                        android:textSize="14sp"
+                        android:textColor="@color/text_secondary_light"
+                        android:layout_marginTop="2dp" />
+
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 

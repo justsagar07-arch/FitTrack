@@ -39,7 +39,7 @@
     <string name="nav_profile">Profile</string>
 
     <!-- Home Dashboard -->
-    <string name="greeting_user">Hello, User!</string>
+    <string name="greeting_user">Hello!</string>>
     <string name="steps_summary">Daily Steps</string>
     <string name="calories_summary">Calories Burned</string>
     <string name="heart_rate_summary">Heart Rate</string>

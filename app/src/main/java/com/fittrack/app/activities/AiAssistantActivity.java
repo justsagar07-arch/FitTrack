@@ -1,3 +1,4 @@
+
 package com.fittrack.app.activities;
 
 import android.os.Bundle;
@@ -32,6 +33,11 @@ public class AiAssistantActivity extends AppCompatActivity {
     private LinearLayout layoutTyping;
     private AiAssistantService aiService;
 
+    private boolean historyLoaded = false;
+
+    private static final String WELCOME_MESSAGE =
+            "Hi there! I'm your AI Fitness Assistant. How can I help you today?";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,14 +45,13 @@ public class AiAssistantActivity extends AppCompatActivity {
 
         initViews();
         setupChat();
-        
-        // Add welcome message
-        addMessage(new ChatMessage("Hi there! I'm your AI Fitness Assistant. How can I help you today?", ChatMessage.TYPE_AI, System.currentTimeMillis()));
+        loadSavedConversation();
     }
 
     private void initViews() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -58,41 +63,127 @@ public class AiAssistantActivity extends AppCompatActivity {
 
         aiService = new AiAssistantService();
 
+        btnSend.setEnabled(false);
         btnSend.setOnClickListener(v -> sendMessage());
     }
 
     private void setupChat() {
         messageList = new ArrayList<>();
         adapter = new AiMessageAdapter(messageList);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
     }
 
+    private void loadSavedConversation() {
+        layoutTyping.setVisibility(View.VISIBLE);
+
+        aiService.loadConversation(new AiAssistantService.ConversationLoadCallback() {
+            @Override
+            public void onLoaded(List<ChatMessage> messages) {
+                if (isFinishing() || isDestroyed()) {
+                    return;
+                }
+
+                messageList.clear();
+                messageList.addAll(messages);
+
+                if (messageList.isEmpty()) {
+                    addMessage(new ChatMessage(
+                            WELCOME_MESSAGE,
+                            ChatMessage.TYPE_AI,
+                            System.currentTimeMillis()
+                    ));
+                } else {
+                    adapter.notifyDataSetChanged();
+                    recyclerView.scrollToPosition(messageList.size() - 1);
+                }
+
+                historyLoaded = true;
+                btnSend.setEnabled(true);
+                layoutTyping.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onError(Exception error) {
+                if (isFinishing() || isDestroyed()) {
+                    return;
+                }
+
+                android.util.Log.e(
+                        "AiAssistantActivity",
+                        "Could not load saved conversation",
+                        error
+                );
+
+                if (messageList.isEmpty()) {
+                    addMessage(new ChatMessage(
+                            WELCOME_MESSAGE,
+                            ChatMessage.TYPE_AI,
+                            System.currentTimeMillis()
+                    ));
+                }
+
+                historyLoaded = true;
+                btnSend.setEnabled(true);
+                layoutTyping.setVisibility(View.GONE);
+
+                Toast.makeText(
+                        AiAssistantActivity.this,
+                        "Couldn't load saved chat. Check your connection.",
+                        Toast.LENGTH_LONG
+                ).show();
+            }
+        });
+    }
+
     private void sendMessage() {
+        if (!historyLoaded) {
+            Toast.makeText(this,
+                    "Please wait for chat history to load.",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         String text = editMessage.getText().toString().trim();
+
         if (text.isEmpty()) {
             return;
         }
 
-        // Add user message
-        addMessage(new ChatMessage(text, ChatMessage.TYPE_USER, System.currentTimeMillis()));
+        addMessage(new ChatMessage(
+                text,
+                ChatMessage.TYPE_USER,
+                System.currentTimeMillis()
+        ));
+
         editMessage.setText("");
-
-        // Show typing indicator
+        btnSend.setEnabled(false);
         layoutTyping.setVisibility(View.VISIBLE);
-        recyclerView.smoothScrollToPosition(messageList.size() - 1);
 
-        // Get AI response
         aiService.getResponse(text, response -> {
+            if (isFinishing() || isDestroyed()) {
+                return;
+            }
+
             layoutTyping.setVisibility(View.GONE);
-            addMessage(new ChatMessage(response, ChatMessage.TYPE_AI, System.currentTimeMillis()));
+
+            addMessage(new ChatMessage(
+                    response,
+                    ChatMessage.TYPE_AI,
+                    System.currentTimeMillis()
+            ));
+
+            btnSend.setEnabled(true);
         });
     }
 
     private void addMessage(ChatMessage message) {
         messageList.add(message);
         adapter.notifyItemInserted(messageList.size() - 1);
-        recyclerView.smoothScrollToPosition(messageList.size() - 1);
+
+        recyclerView.post(() ->
+                recyclerView.smoothScrollToPosition(messageList.size() - 1));
     }
 
     @Override
@@ -104,6 +195,7 @@ public class AiAssistantActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+
         if (id == android.R.id.home) {
             finish();
             return true;
@@ -111,14 +203,26 @@ public class AiAssistantActivity extends AppCompatActivity {
             clearChat();
             return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 
     private void clearChat() {
+        aiService.clearConversation();
+
         messageList.clear();
         adapter.notifyDataSetChanged();
-        Toast.makeText(this, "Chat cleared", Toast.LENGTH_SHORT).show();
-        // Add welcome message again
-        addMessage(new ChatMessage("Hi there! I'm your AI Fitness Assistant. How can I help you today?", ChatMessage.TYPE_AI, System.currentTimeMillis()));
+
+        addMessage(new ChatMessage(
+                WELCOME_MESSAGE,
+                ChatMessage.TYPE_AI,
+                System.currentTimeMillis()
+        ));
+
+        Toast.makeText(
+                this,
+                "Chat history cleared",
+                Toast.LENGTH_SHORT
+        ).show();
     }
 }

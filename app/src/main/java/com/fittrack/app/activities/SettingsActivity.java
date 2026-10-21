@@ -40,7 +40,7 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.btn_about_us).setOnClickListener(v -> {
-            startActivity(new Intent(this, AboutUsActivity.class));
+            startActivity(new Intent(this, UserGuideActivity.class));
         });
     }
 }

@@ -29,6 +29,7 @@ import com.fittrack.app.services.StepTrackingService;
 import com.fittrack.app.services.HealthDataManager;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -42,6 +43,7 @@ public class HomeFragment extends BaseFragment {
 
     private HealthDataManager healthDataManager;
 
+    private TextView tvGreeting;
     private TextView tvSteps;
     private TextView tvCalories;
     private TextView tvHeartRate;
@@ -69,15 +71,9 @@ public class HomeFragment extends BaseFragment {
             registerForActivityResult(
                     new ActivityResultContracts.RequestPermission(),
                     isGranted -> {
-
-                        Log.d(
-                                TAG,
-                                "ACTIVITY_RECOGNITION permission = "
-                                        + isGranted
-                        );
+                        Log.d(TAG, "ACTIVITY_RECOGNITION permission = " + isGranted);
 
                         if (isGranted) {
-
                             if (isAdded()) {
                                 Toast.makeText(
                                         requireContext(),
@@ -85,11 +81,8 @@ public class HomeFragment extends BaseFragment {
                                         Toast.LENGTH_SHORT
                                 ).show();
                             }
-
                             startBackgroundStepTracking();
-
                         } else {
-
                             if (isAdded()) {
                                 Toast.makeText(
                                         requireContext(),
@@ -97,11 +90,7 @@ public class HomeFragment extends BaseFragment {
                                         Toast.LENGTH_LONG
                                 ).show();
                             }
-
-                            Log.e(
-                                    TAG,
-                                    "ACTIVITY_RECOGNITION permission denied"
-                            );
+                            Log.e(TAG, "ACTIVITY_RECOGNITION permission denied");
                         }
                     }
             );
@@ -121,6 +110,9 @@ public class HomeFragment extends BaseFragment {
         );
 
         healthDataManager = new HealthDataManager(requireContext());
+
+        // GREETING
+        tvGreeting = view.findViewById(R.id.tv_greeting);
 
         // SUMMARY CARDS
         tvSteps = view.findViewById(R.id.tv_steps_value);
@@ -171,7 +163,6 @@ public class HomeFragment extends BaseFragment {
 
         // AI ASSISTANT
         cardAiAssistant = view.findViewById(R.id.card_ai_assistant);
-
         if (cardAiAssistant != null) {
             cardAiAssistant.setOnClickListener(v -> {
                 Intent intent = new Intent(
@@ -184,7 +175,6 @@ public class HomeFragment extends BaseFragment {
 
         // BODY ANALYSIS
         cardBodyAnalysis = view.findViewById(R.id.card_body_analysis);
-
         if (cardBodyAnalysis != null) {
             cardBodyAnalysis.setOnClickListener(v -> {
                 Intent intent = new Intent(
@@ -197,7 +187,6 @@ public class HomeFragment extends BaseFragment {
 
         // DIET PLAN
         cardDietPlan = view.findViewById(R.id.card_diet_plan);
-
         if (cardDietPlan != null) {
             cardDietPlan.setOnClickListener(v -> {
                 requireActivity()
@@ -214,7 +203,6 @@ public class HomeFragment extends BaseFragment {
 
         // EXERCISES
         cardExercises = view.findViewById(R.id.card_exercises);
-
         if (cardExercises != null) {
             cardExercises.setOnClickListener(v -> {
                 requireActivity()
@@ -229,6 +217,7 @@ public class HomeFragment extends BaseFragment {
             });
         }
 
+        loadUserGreeting();
         loadHealthData();
         loadCompletedWorkoutsSummary();
 
@@ -238,12 +227,51 @@ public class HomeFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-
         Log.d(TAG, "HomeFragment onResume");
 
         checkActivityRecognitionPermission();
+        loadUserGreeting();
         loadHealthData();
         loadCompletedWorkoutsSummary();
+    }
+
+    private void loadUserGreeting() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            if (tvGreeting != null) {
+                tvGreeting.setText("Hello, Guest!");
+            }
+            return;
+        }
+
+        String userId = currentUser.getUid();
+        FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(userId)
+                .get()
+                .addOnSuccessListener(doc -> {
+                    if (!isAdded()) return;
+                    if (doc.exists()) {
+                        String name = doc.getString("Username");
+                        if (name == null || name.trim().isEmpty()) {
+                            name = doc.getString("username");
+                        }
+                        if (name != null && !name.trim().isEmpty()) {
+                            if (tvGreeting != null) {
+                                tvGreeting.setText("Hello, " + name + "!");
+                            }
+                            return;
+                        }
+                    }
+                    if (tvGreeting != null) {
+                        tvGreeting.setText("Hello!");
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    if (isAdded() && tvGreeting != null) {
+                        tvGreeting.setText("Hello!");
+                    }
+                });
     }
 
     private void loadCompletedWorkoutsSummary() {
@@ -431,21 +459,10 @@ public class HomeFragment extends BaseFragment {
         );
 
         if (permissionStatus == PackageManager.PERMISSION_GRANTED) {
-
-            Log.d(
-                    TAG,
-                    "ACTIVITY_RECOGNITION permission = GRANTED"
-            );
-
+            Log.d(TAG, "ACTIVITY_RECOGNITION permission = GRANTED");
             startBackgroundStepTracking();
-
         } else {
-
-            Log.d(
-                    TAG,
-                    "ACTIVITY_RECOGNITION permission = NOT GRANTED"
-            );
-
+            Log.d(TAG, "ACTIVITY_RECOGNITION permission = NOT GRANTED");
             activityRecognitionPermissionLauncher.launch(
                     Manifest.permission.ACTIVITY_RECOGNITION
             );
@@ -459,7 +476,6 @@ public class HomeFragment extends BaseFragment {
         }
 
         try {
-
             Intent serviceIntent = new Intent(
                     requireContext(),
                     StepTrackingService.class
@@ -473,12 +489,7 @@ public class HomeFragment extends BaseFragment {
             Log.d(TAG, "StepTrackingService started");
 
         } catch (Exception e) {
-
-            Log.e(
-                    TAG,
-                    "Could not start StepTrackingService",
-                    e
-            );
+            Log.e(TAG, "Could not start StepTrackingService", e);
 
             if (isAdded()) {
                 Toast.makeText(

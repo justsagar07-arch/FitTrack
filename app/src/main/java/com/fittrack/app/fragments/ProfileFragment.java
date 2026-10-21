@@ -1,10 +1,7 @@
-
 package com.fittrack.app.fragments;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -20,19 +17,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.fittrack.app.R;
+import com.fittrack.app.activities.AboutUsActivity;
 import com.fittrack.app.activities.EditProfileActivity;
+import com.fittrack.app.activities.HealthSettingsActivity;
 import com.fittrack.app.activities.LoginActivity;
 import com.fittrack.app.activities.PersonalGoalsActivity;
 import com.fittrack.app.activities.RemindersActivity;
 import com.fittrack.app.activities.SettingsActivity;
 import com.fittrack.app.activities.WorkoutHistoryActivity;
+import com.fittrack.app.services.MongoPhotoDownloadService;
+import com.fittrack.app.services.MongoPhotoUploadService;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 
 public class ProfileFragment extends BaseFragment {
 
@@ -44,15 +41,7 @@ public class ProfileFragment extends BaseFragment {
     private FirebaseFirestore firestore;
 
     private ActivityResultLauncher<String> imagePickerLauncher;
-
-    private static final String PROFILE_PHOTO_FILE =
-            "profile_photo.jpg";
-
-    private static final String PREFS_NAME =
-            "FitTrackProfile";
-
-    private static final String KEY_PROFILE_PHOTO =
-            "profile_photo_path";
+    private boolean photoUploadInProgress = false;
 
     @Nullable
     @Override
@@ -61,7 +50,6 @@ public class ProfileFragment extends BaseFragment {
             @Nullable ViewGroup container,
             @Nullable Bundle savedInstanceState
     ) {
-
         View view = inflater.inflate(
                 R.layout.fragment_profile,
                 container,
@@ -79,108 +67,103 @@ public class ProfileFragment extends BaseFragment {
                 new ActivityResultContracts.GetContent(),
                 uri -> {
                     if (uri != null) {
-                        saveProfilePhotoLocally(uri);
+                        uploadProfilePhoto(uri);
                     }
                 }
         );
 
-        ivProfilePic.setOnClickListener(v ->
-                imagePickerLauncher.launch("image/*")
-        );
+        ivProfilePic.setOnClickListener(v -> {
+            if (!photoUploadInProgress) {
+                imagePickerLauncher.launch("image/*");
+            }
+        });
 
         loadUserProfile();
 
-        // EDIT PROFILE
         view.findViewById(R.id.btn_edit_profile)
-                .setOnClickListener(v -> {
-                    Intent intent = new Intent(
-                            requireActivity(),
-                            EditProfileActivity.class
-                    );
-                    startActivity(intent);
-                });
+                .setOnClickListener(v ->
+                        startActivity(new Intent(
+                                requireActivity(),
+                                EditProfileActivity.class
+                        ))
+                );
 
-        // WORKOUT HISTORY
         view.findViewById(R.id.btn_workout_history)
                 .setOnClickListener(v -> {
-
                     if (firebaseAuth.getCurrentUser() == null) {
-                        Toast.makeText(
-                                requireContext(),
-                                "Please login to view workout history",
-                                Toast.LENGTH_SHORT
-                        ).show();
+                        showMessage("Please login to view workout history");
                         return;
                     }
 
-                    Intent intent = new Intent(
+                    startActivity(new Intent(
                             requireActivity(),
                             WorkoutHistoryActivity.class
-                    );
-                    startActivity(intent);
+                    ));
                 });
 
-        // PERSONAL GOALS
-        View btnPersonalGoals = view.findViewById(R.id.btn_personal_goals);
+        View btnPersonalGoals =
+                view.findViewById(R.id.btn_personal_goals);
+
         if (btnPersonalGoals != null) {
             btnPersonalGoals.setOnClickListener(v -> {
                 if (firebaseAuth.getCurrentUser() == null) {
-                    Toast.makeText(
-                            requireContext(),
-                            "Please login to view personal goals",
-                            Toast.LENGTH_SHORT
-                    ).show();
+                    showMessage("Please login to view personal goals");
                     return;
                 }
 
-                Intent intent = new Intent(
+                startActivity(new Intent(
                         requireActivity(),
                         PersonalGoalsActivity.class
-                );
-                startActivity(intent);
+                ));
             });
         }
 
-        // HEALTH SETTINGS
-        view.findViewById(R.id.btn_health_settings)
+        View btnHealthSettings =
+                view.findViewById(R.id.btn_health_settings);
+
+        if (btnHealthSettings != null) {
+            btnHealthSettings.setOnClickListener(v ->
+                    startActivity(new Intent(
+                            requireActivity(),
+                            HealthSettingsActivity.class
+                    ))
+            );
+        }
+
+        view.findViewById(R.id.btn_reminders)
                 .setOnClickListener(v ->
-                        Toast.makeText(
-                                requireContext(),
-                                "Health Settings clicked",
-                                Toast.LENGTH_SHORT
-                        ).show()
+                        startActivity(new Intent(
+                                requireActivity(),
+                                RemindersActivity.class
+                        ))
                 );
 
-        // REMINDERS
-        view.findViewById(R.id.btn_reminders)
-                .setOnClickListener(v -> {
-                    Intent intent = new Intent(
-                            requireActivity(),
-                            RemindersActivity.class
-                    );
-                    startActivity(intent);
-                });
+        View btnAboutUs = view.findViewById(R.id.btn_about_us);
 
-        // SETTINGS
+        if (btnAboutUs != null) {
+            btnAboutUs.setOnClickListener(v ->
+                    startActivity(new Intent(
+                            requireActivity(),
+                            AboutUsActivity.class
+                    ))
+            );
+        }
+
         view.findViewById(R.id.btn_settings)
-                .setOnClickListener(v -> {
-                    Intent intent = new Intent(
-                            requireActivity(),
-                            SettingsActivity.class
-                    );
-                    startActivity(intent);
-                });
+                .setOnClickListener(v ->
+                        startActivity(new Intent(
+                                requireActivity(),
+                                SettingsActivity.class
+                        ))
+                );
 
-        // LOGOUT
         view.findViewById(R.id.btn_logout)
                 .setOnClickListener(v -> logoutUser());
 
         return view;
     }
 
-    // LOAD USER PROFILE
     private void loadUserProfile() {
-
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
 
         if (currentUser == null) {
@@ -193,177 +176,161 @@ public class ProfileFragment extends BaseFragment {
         String userId = currentUser.getUid();
         String email = currentUser.getEmail();
 
-        if (email != null && !email.isEmpty()) {
-            tvProfileEmail.setText(email);
-        } else {
-            tvProfileEmail.setText("Email not available");
-        }
-
-        loadLocalProfilePhoto();
+        tvProfileEmail.setText(
+                email != null && !email.isEmpty()
+                        ? email
+                        : "Email not available"
+        );
 
         firestore.collection("users")
                 .document(userId)
                 .get()
-                .addOnSuccessListener(documentSnapshot -> {
+                .addOnSuccessListener(document -> {
+                    if (!isAdded()) {
+                        return;
+                    }
 
-                    if (!isAdded()) return;
+                    if (document.exists()) {
+                        String fullName = document.getString("fullName");
+                        String username = document.getString("username");
 
-                    if (documentSnapshot.exists()) {
-
-                        String fullName =
-                                documentSnapshot.getString("fullName");
-
-                        String username =
-                                documentSnapshot.getString("username");
-
-                        if (fullName != null &&
-                                !fullName.trim().isEmpty()) {
-
+                        if (fullName != null && !fullName.trim().isEmpty()) {
                             tvProfileName.setText(fullName);
-
-                        } else if (username != null &&
-                                !username.trim().isEmpty()) {
-
+                        } else if (username != null
+                                && !username.trim().isEmpty()) {
                             tvProfileName.setText(username);
-
                         } else {
                             tvProfileName.setText("FitTrack User");
                         }
 
+                        String photoId =
+                                document.getString("profilePhotoId");
+
+                        if (photoId != null && !photoId.trim().isEmpty()) {
+                            downloadProfilePhoto(photoId);
+                        } else {
+                            ivProfilePic.setImageResource(
+                                    R.drawable.ic_person
+                            );
+                        }
                     } else {
                         tvProfileName.setText("FitTrack User");
+                        ivProfilePic.setImageResource(R.drawable.ic_person);
                     }
                 })
                 .addOnFailureListener(error -> {
-
-                    if (!isAdded()) return;
+                    if (!isAdded()) {
+                        return;
+                    }
 
                     tvProfileName.setText("FitTrack User");
-
-                    Toast.makeText(
-                            requireContext(),
-                            "Could not load profile",
-                            Toast.LENGTH_SHORT
-                    ).show();
+                    showMessage("Could not load profile: " + error.getMessage());
                 });
     }
 
-    // SAVE PROFILE PHOTO LOCALLY
-    private void saveProfilePhotoLocally(Uri imageUri) {
+    private void uploadProfilePhoto(Uri imageUri) {
+        FirebaseUser user = firebaseAuth.getCurrentUser();
 
-        if (firebaseAuth.getCurrentUser() == null) {
-            Toast.makeText(
-                    requireContext(),
-                    "Please login first",
-                    Toast.LENGTH_SHORT
-            ).show();
+        if (user == null) {
+            showMessage("Please login first");
             return;
         }
 
-        try {
-            File profilePhotoFile = new File(
-                    requireContext().getFilesDir(),
-                    PROFILE_PHOTO_FILE
-            );
+        if (photoUploadInProgress) {
+            return;
+        }
 
-            try (InputStream inputStream =
-                         requireContext().getContentResolver()
-                                 .openInputStream(imageUri)) {
+        photoUploadInProgress = true;
 
-                if (inputStream == null) {
-                    Toast.makeText(
-                            requireContext(),
-                            "Could not read selected photo",
-                            Toast.LENGTH_LONG
-                    ).show();
-                    return;
-                }
+        MongoPhotoUploadService.uploadPhoto(
+                requireContext(),
+                imageUri,
+                "profile",
+                new MongoPhotoUploadService.UploadCallback() {
+                    @Override
+                    public void onSuccess(String photoId) {
+                        if (!isAdded()) {
+                            return;
+                        }
 
-                try (FileOutputStream outputStream =
-                             new FileOutputStream(profilePhotoFile)) {
+                        firestore.collection("users")
+                                .document(user.getUid())
+                                .update("profilePhotoId", photoId)
+                                .addOnSuccessListener(unused -> {
+                                    if (!isAdded()) {
+                                        return;
+                                    }
 
-                    byte[] buffer = new byte[8192];
-                    int bytesRead;
+                                    photoUploadInProgress = false;
+                                    showMessage("Profile photo updated");
+                                    downloadProfilePhoto(photoId);
+                                })
+                                .addOnFailureListener(error -> {
+                                    if (!isAdded()) {
+                                        return;
+                                    }
 
-                    while ((bytesRead = inputStream.read(buffer)) != -1) {
-                        outputStream.write(buffer, 0, bytesRead);
+                                    photoUploadInProgress = false;
+                                    showMessage(
+                                            "Photo uploaded, but profile could not be updated: "
+                                                    + error.getMessage()
+                                    );
+                                });
                     }
 
-                    outputStream.flush();
+                    @Override
+                    public void onFailure(String error) {
+                        if (!isAdded()) {
+                            return;
+                        }
+
+                        photoUploadInProgress = false;
+                        showMessage("Photo upload failed: " + error);
+                    }
                 }
-            }
+        );
+    }
 
-            requireContext()
-                    .getSharedPreferences(
-                            PREFS_NAME,
-                            Context.MODE_PRIVATE
-                    )
-                    .edit()
-                    .putString(
-                            KEY_PROFILE_PHOTO,
-                            profilePhotoFile.getAbsolutePath()
-                    )
-                    .apply();
+    private void downloadProfilePhoto(String photoId) {
+        if (!isAdded()) {
+            return;
+        }
 
-            displayProfilePhoto(profilePhotoFile.getAbsolutePath());
+        MongoPhotoDownloadService.downloadPhoto(
+                requireContext(),
+                photoId,
+                new MongoPhotoDownloadService.DownloadCallback() {
+                    @Override
+                    public void onSuccess(Bitmap bitmap) {
+                        if (isAdded()) {
+                            ivProfilePic.setImageBitmap(bitmap);
+                        }
+                    }
 
+                    @Override
+                    public void onFailure(String error) {
+                        if (!isAdded()) {
+                            return;
+                        }
+
+                        ivProfilePic.setImageResource(R.drawable.ic_person);
+                        showMessage("Photo download failed: " + error);
+                    }
+                }
+        );
+    }
+
+    private void showMessage(String message) {
+        if (isAdded()) {
             Toast.makeText(
                     requireContext(),
-                    "Profile photo updated",
-                    Toast.LENGTH_SHORT
-            ).show();
-
-        } catch (Exception error) {
-            Toast.makeText(
-                    requireContext(),
-                    "Photo save failed: " + error.getMessage(),
+                    message,
                     Toast.LENGTH_LONG
             ).show();
         }
     }
 
-    // LOAD LOCAL PROFILE PHOTO
-    private void loadLocalProfilePhoto() {
-
-        String savedPhotoPath = requireContext()
-                .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-                .getString(KEY_PROFILE_PHOTO, null);
-
-        if (savedPhotoPath == null || savedPhotoPath.isEmpty()) {
-            ivProfilePic.setImageResource(R.drawable.ic_person);
-            return;
-        }
-
-        File photoFile = new File(savedPhotoPath);
-
-        if (!photoFile.exists()) {
-            ivProfilePic.setImageResource(R.drawable.ic_person);
-            return;
-        }
-
-        displayProfilePhoto(savedPhotoPath);
-    }
-
-    // DISPLAY PROFILE PHOTO
-    private void displayProfilePhoto(String photoPath) {
-
-        try {
-            Bitmap bitmap = BitmapFactory.decodeFile(photoPath);
-
-            if (bitmap != null) {
-                ivProfilePic.setImageBitmap(bitmap);
-            } else {
-                ivProfilePic.setImageResource(R.drawable.ic_person);
-            }
-
-        } catch (Exception error) {
-            ivProfilePic.setImageResource(R.drawable.ic_person);
-        }
-    }
-
-    // LOGOUT
     private void logoutUser() {
-
         firebaseAuth.signOut();
 
         Intent intent = new Intent(
@@ -372,15 +339,14 @@ public class ProfileFragment extends BaseFragment {
         );
 
         intent.setFlags(
-                Intent.FLAG_ACTIVITY_NEW_TASK |
-                        Intent.FLAG_ACTIVITY_CLEAR_TASK
+                Intent.FLAG_ACTIVITY_NEW_TASK
+                        | Intent.FLAG_ACTIVITY_CLEAR_TASK
         );
 
         startActivity(intent);
         requireActivity().finish();
     }
 
-    // REFRESH PROFILE
     @Override
     public void onResume() {
         super.onResume();

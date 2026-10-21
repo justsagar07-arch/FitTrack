@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fittrack.app.R;
+import com.fittrack.app.utils.UnitUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -22,6 +23,8 @@ public class BodyMetricsActivity extends AppCompatActivity {
     private TextView tvHeight;
     private TextView tvWeight;
     private TextView tvBmi;
+    private TextView tvBmiCategory;
+    private TextView tvBmiInfo;
     private TextView tvAge;
     private TextView tvBmr;
 
@@ -52,6 +55,12 @@ public class BodyMetricsActivity extends AppCompatActivity {
 
         tvBmi =
                 findViewById(R.id.tv_bmi);
+
+        tvBmiCategory =
+                findViewById(R.id.tv_bmi_category);
+
+        tvBmiInfo =
+                findViewById(R.id.tv_bmi_info);
 
         tvAge =
                 findViewById(R.id.tv_age);
@@ -168,12 +177,6 @@ public class BodyMetricsActivity extends AppCompatActivity {
                                     calculateAgeFromDob(
                                             dateOfBirth
                                     );
-
-                            /*
-                             * Backward compatibility:
-                             * Agar old profile mein DOB nahi hai,
-                             * existing age field use hoga.
-                             */
 
                             if (age == null) {
 
@@ -311,11 +314,6 @@ public class BodyMetricsActivity extends AppCompatActivity {
                             Calendar.DAY_OF_MONTH
                     );
 
-            /*
-             * Birthday abhi nahi aaya hai
-             * to age se 1 minus.
-             */
-
             if (currentMonth < birthMonth
                     || (
                     currentMonth == birthMonth
@@ -324,10 +322,6 @@ public class BodyMetricsActivity extends AppCompatActivity {
 
                 age--;
             }
-
-            /*
-             * Safety validation.
-             */
 
             if (age < 0
                     || age > 120) {
@@ -355,48 +349,11 @@ public class BodyMetricsActivity extends AppCompatActivity {
     ) {
 
         // -----------------------------------------
-        // HEIGHT
+        // HEIGHT & WEIGHT
         // -----------------------------------------
 
-        if (heightCm != null
-                && heightCm > 0) {
-
-            tvHeight.setText(
-                    String.format(
-                            Locale.getDefault(),
-                            "%.0f cm",
-                            heightCm
-                    )
-            );
-
-        } else {
-
-            tvHeight.setText(
-                    "-- cm"
-            );
-        }
-
-        // -----------------------------------------
-        // WEIGHT
-        // -----------------------------------------
-
-        if (weightKg != null
-                && weightKg > 0) {
-
-            tvWeight.setText(
-                    String.format(
-                            Locale.getDefault(),
-                            "%.1f kg",
-                            weightKg
-                    )
-            );
-
-        } else {
-
-            tvWeight.setText(
-                    "-- kg"
-            );
-        }
+        tvHeight.setText(UnitUtils.formatHeight(this, heightCm));
+        tvWeight.setText(UnitUtils.formatWeight(this, weightKg));
 
         // -----------------------------------------
         // AGE
@@ -417,7 +374,7 @@ public class BodyMetricsActivity extends AppCompatActivity {
         }
 
         // -----------------------------------------
-        // BMI
+        // BMI & CATEGORY & INFO
         // -----------------------------------------
 
         if (heightCm != null
@@ -443,11 +400,58 @@ public class BodyMetricsActivity extends AppCompatActivity {
                     )
             );
 
+            if (age != null && age < 20) {
+                if (tvBmiCategory != null) {
+                    tvBmiCategory.setText("Category: Pediatric / Teen Notice");
+                }
+                if (tvBmiInfo != null) {
+                    tvBmiInfo.setText("For children and teenagers under 20, BMI is interpreted using age- and sex-specific growth percentiles rather than adult cutoffs. Please consult a healthcare professional for pediatric BMI growth charts.");
+                }
+            } else {
+                if (bmi < 18.5) {
+                    if (tvBmiCategory != null) {
+                        tvBmiCategory.setText("Category: Underweight");
+                    }
+                    if (tvBmiInfo != null) {
+                        tvBmiInfo.setText("Your BMI indicates you are in the underweight category. A balanced diet and strength training may help achieve a healthy weight. Consider consulting a healthcare professional for personalized guidance.");
+                    }
+                } else if (bmi < 25.0) {
+                    if (tvBmiCategory != null) {
+                        tvBmiCategory.setText("Category: Normal / Healthy Weight");
+                    }
+                    if (tvBmiInfo != null) {
+                        tvBmiInfo.setText("Your BMI is within the healthy weight range (18.5 - 24.9). Maintaining regular physical activity and a balanced diet helps support long-term wellness.");
+                    }
+                } else if (bmi < 30.0) {
+                    if (tvBmiCategory != null) {
+                        tvBmiCategory.setText("Category: Overweight");
+                    }
+                    if (tvBmiInfo != null) {
+                        tvBmiInfo.setText("Your BMI indicates you are in the overweight category (25.0 - 29.9). Regular physical activity and nutritious meal planning can support healthy weight management.");
+                    }
+                } else {
+                    if (tvBmiCategory != null) {
+                        tvBmiCategory.setText("Category: Obesity");
+                    }
+                    if (tvBmiInfo != null) {
+                        tvBmiInfo.setText("Your BMI indicates you are in the obesity category (30.0 or higher). Small, consistent lifestyle modifications in activity and nutrition can improve overall health. Consider speaking with a healthcare provider for a supportive plan.");
+                    }
+                }
+            }
+
         } else {
 
             tvBmi.setText(
                     "--"
             );
+
+            if (tvBmiCategory != null) {
+                tvBmiCategory.setText("Category: Data Missing");
+            }
+
+            if (tvBmiInfo != null) {
+                tvBmiInfo.setText("Height and weight values are required in your profile to calculate BMI and determine category.");
+            }
         }
 
         // -----------------------------------------
@@ -521,10 +525,6 @@ public class BodyMetricsActivity extends AppCompatActivity {
                                 Locale.getDefault()
                         );
 
-        // -----------------------------------------
-        // TEEN USERS: 10-18 YEARS
-        // -----------------------------------------
-
         if (age >= 10
                 && age <= 18) {
 
@@ -543,10 +543,6 @@ public class BodyMetricsActivity extends AppCompatActivity {
                                 + 692.6;
             }
         }
-
-        // -----------------------------------------
-        // ADULT USERS: 19+
-        // -----------------------------------------
 
         if (age >= 19) {
 
@@ -582,18 +578,8 @@ public class BodyMetricsActivity extends AppCompatActivity {
             }
         }
 
-        /*
-         * Age below 10 ya unknown gender
-         * ke case mein unsupported guess
-         * nahi karenge.
-         */
-
         return 0;
     }
-
-    // =================================================
-    // GENDER HELPERS
-    // =================================================
 
     private boolean isMale(
             String gender
@@ -623,13 +609,9 @@ public class BodyMetricsActivity extends AppCompatActivity {
 
     private void showEmptyValues() {
 
-        tvHeight.setText(
-                "-- cm"
-        );
+        tvHeight.setText(UnitUtils.formatHeight(this, null));
 
-        tvWeight.setText(
-                "-- kg"
-        );
+        tvWeight.setText(UnitUtils.formatWeight(this, null));
 
         tvAge.setText(
                 "--"
@@ -638,6 +620,14 @@ public class BodyMetricsActivity extends AppCompatActivity {
         tvBmi.setText(
                 "--"
         );
+
+        if (tvBmiCategory != null) {
+            tvBmiCategory.setText("Category: Data Missing");
+        }
+
+        if (tvBmiInfo != null) {
+            tvBmiInfo.setText("Height and weight values are required in your profile to calculate BMI and determine category.");
+        }
 
         tvBmr.setText(
                 "-- kcal/day"

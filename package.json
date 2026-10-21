@@ -1,0 +1,24 @@
+{
+  "name": "fittrack",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/justsagar07-arch/FitTrack.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/justsagar07-arch/FitTrack/issues"
+  },
+  "homepage": "https://github.com/justsagar07-arch/FitTrack#readme",
+  "dependencies": {
+    "firebase-admin": "^14.5.0"
+  }
+}

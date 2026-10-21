@@ -127,6 +127,36 @@ public class HealthConnectManager {
         });
     }
 
+    public void getGrantedPermissions(
+            @NonNull GrantedPermissionsSetCallback callback
+    ) {
+
+        if (!isAvailable()) {
+
+            callback.onResult(Collections.emptySet());
+
+            return;
+        }
+
+        executor.execute(() -> {
+
+            try {
+
+                healthConnectClient
+                        .getPermissionController()
+                        .getGrantedPermissions(
+                                new GrantedSetContinuation(
+                                        callback
+                                )
+                        );
+
+            } catch (Exception e) {
+
+                callback.onError(e);
+            }
+        });
+    }
+
     // ---------------------------------------------------------
     // GET TODAY'S STEPS
     // ---------------------------------------------------------
@@ -328,6 +358,70 @@ public class HealthConnectManager {
 
                 callback.onResult(
                         granted
+                );
+
+            } catch (Throwable error) {
+
+                if (error instanceof Exception) {
+
+                    callback.onError(
+                            (Exception) error
+                    );
+
+                } else {
+
+                    callback.onError(
+                            new Exception(error)
+                    );
+                }
+            }
+        }
+    }
+
+    // =========================================================
+    // GRANTED SET CONTINUATION
+    // =========================================================
+
+    private static class GrantedSetContinuation
+            implements Continuation<Set<String>> {
+
+        private final GrantedPermissionsSetCallback callback;
+
+        GrantedSetContinuation(
+                GrantedPermissionsSetCallback callback
+        ) {
+
+            this.callback = callback;
+        }
+
+        @NonNull
+        @Override
+        public CoroutineContext getContext() {
+
+            return EmptyCoroutineContext.INSTANCE;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public void resumeWith(
+                Object result
+        ) {
+
+            try {
+
+                ResultKt.throwOnFailure(
+                        result
+                );
+
+                Set<String> grantedPermissions =
+                        (Set<String>) result;
+
+                if (grantedPermissions == null) {
+                    grantedPermissions = Collections.emptySet();
+                }
+
+                callback.onResult(
+                        grantedPermissions
                 );
 
             } catch (Throwable error) {
@@ -577,6 +671,17 @@ public class HealthConnectManager {
 
         void onResult(
                 boolean granted
+        );
+
+        void onError(
+                Exception error
+        );
+    }
+
+    public interface GrantedPermissionsSetCallback {
+
+        void onResult(
+                Set<String> grantedPermissions
         );
 
         void onError(

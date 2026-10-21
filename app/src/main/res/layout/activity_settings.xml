@@ -113,7 +113,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="16dp"
                             android:layout_weight="1"
-                            android:text="About FitTrack"
+                            android:text="User Guide"
                             android:textAppearance="?attr/textAppearanceBodyLarge" />
 
                         <ImageView

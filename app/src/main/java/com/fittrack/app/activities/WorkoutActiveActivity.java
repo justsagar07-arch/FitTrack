@@ -1,13 +1,18 @@
 package com.fittrack.app.activities;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.text.InputType;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fittrack.app.R;
@@ -39,27 +44,114 @@ public class WorkoutActiveActivity extends AppCompatActivity {
 
     private CountDownTimer countDownTimer;
 
-    private static final int TOTAL_SETS = 3;
-    private static final int REPS_PER_SET = 12;
     private static final int REST_SECONDS = 30;
+    private static final int DEFAULT_SETS = 3;
+    private static final int DEFAULT_REPS = 15;
+    private static final int DEFAULT_TIMER_SECONDS = 60;
 
+    private int totalSets = DEFAULT_SETS;
+    private int repsPerSet = DEFAULT_REPS;
     private int currentSet = 1;
+    private int completedSets = 0;
+    private int currentSetReps = 0;
+    private int postureAccuracyTotal = 0;
+    private int postureAccuracySets = 0;
+    private int latestPostureAccuracy = 0;
+    private int latestEvaluatedFrames = 0;
+
     private boolean isResting = false;
     private boolean workoutCompleted = false;
     private boolean historySaveStarted = false;
-    private long workoutStartTimeMs = 0;
+    private boolean cameraWorkout = false;
+    private boolean timeBasedWorkout = false;
 
+    private long workoutStartTimeMs;
     private String exerciseName = "Exercise Workout";
+
+    private final ActivityResultLauncher<Intent> postureLauncher =
+            registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        if (workoutCompleted || isFinishing()) {
+                            return;
+                        }
+
+                        if (result.getResultCode() != RESULT_OK
+                                || result.getData() == null) {
+
+                            btnFinishActive.setEnabled(true);
+
+                            Toast.makeText(
+                                    this,
+                                    "Set was not completed. You can try again.",
+                                    Toast.LENGTH_SHORT
+                            ).show();
+
+                            return;
+                        }
+
+                        latestPostureAccuracy = result.getData()
+                                .getIntExtra("posture_accuracy", 0);
+                        latestEvaluatedFrames = result.getData()
+                                .getIntExtra("evaluated_frames", 0);
+                        if (cameraWorkout && latestEvaluatedFrames > 0) {
+                            postureAccuracyTotal += latestPostureAccuracy;
+                            postureAccuracySets++;
+                        }
+
+                        if (timeBasedWorkout) {
+                            int completedSeconds = result.getData()
+                                    .getIntExtra("completed_seconds", 0);
+
+                            if (completedSeconds < repsPerSet) {
+                                btnFinishActive.setEnabled(true);
+
+                                Toast.makeText(
+                                        this,
+                                        "Target valid-posture time not reached. Try again.",
+                                        Toast.LENGTH_SHORT
+                                ).show();
+
+                                return;
+                            }
+
+                            currentSetReps = completedSeconds;
+                            completeCurrentSet();
+                            return;
+                        }
+
+                        int detectedReps = result.getData()
+                                .getIntExtra("completed_reps", 0);
+
+                        if (detectedReps < repsPerSet) {
+                            btnFinishActive.setEnabled(true);
+
+                            Toast.makeText(
+                                    this,
+                                    "Target reps not reached yet.",
+                                    Toast.LENGTH_SHORT
+                            ).show();
+
+                            return;
+                        }
+
+                        currentSetReps = detectedReps;
+                        completeCurrentSet();
+                    }
+            );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        workoutStartTimeMs = System.currentTimeMillis();
         setContentView(R.layout.activity_workout_active);
 
-        String receivedName = getIntent().getStringExtra("exercise_name");
+        workoutStartTimeMs = System.currentTimeMillis();
+
+        String receivedName =
+                getIntent().getStringExtra("exercise_name");
+
         if (receivedName != null && !receivedName.trim().isEmpty()) {
-            exerciseName = receivedName;
+            exerciseName = receivedName.trim();
         }
 
         layoutActive = findViewById(R.id.layout_active);
@@ -73,29 +165,132 @@ public class WorkoutActiveActivity extends AppCompatActivity {
         btnBackToLibrary = findViewById(R.id.btn_back_to_library);
         btnViewHistory = findViewById(R.id.btn_view_history);
 
+        String upperName = exerciseName
+                .trim()
+                .toUpperCase(Locale.ROOT)
+                .replace('_', ' ')
+                .replace('-', ' ')
+                .replaceAll("\\s+", " ");
+
+        // All workouts use the existing posture-detection camera.
+        cameraWorkout = true;
+
+        // Timer-based exercises.
+        timeBasedWorkout = upperName.contains("PLANK")
+                || upperName.contains("HIIT")
+                || upperName.contains("JUMP ROPE")
+                || upperName.contains("JUMPING JACK")
+                || upperName.contains("JUMPING JACKS")
+                || upperName.contains("HIGH KNEE")
+                || upperName.contains("HIGH KNEES")
+                || upperName.contains("JOGGING IN PLACE")
+                || upperName.contains("JOG IN PLACE")
+                || upperName.contains("RUNNING IN PLACE");
+
+        // Set defaults according to exercise type.
+        totalSets = DEFAULT_SETS;
+        repsPerSet = timeBasedWorkout
+                ? DEFAULT_TIMER_SECONDS
+                : DEFAULT_REPS;
+
         tvExerciseName.setText(exerciseName);
 
         layoutActive.setVisibility(View.VISIBLE);
         layoutSuccess.setVisibility(View.GONE);
 
+        tvRepLabel.setOnClickListener(v -> showTargetEditor());
         btnFinishActive.setOnClickListener(v -> onWorkoutButtonClick());
-
         btnBackToLibrary.setOnClickListener(v -> finish());
 
         btnViewHistory.setEnabled(false);
-        btnViewHistory.setOnClickListener(v -> {
-            Intent intent = new Intent(
-                    WorkoutActiveActivity.this,
-                    WorkoutHistoryActivity.class
-            );
-            startActivity(intent);
-        });
+        btnViewHistory.setOnClickListener(v -> startActivity(
+                new Intent(
+                        WorkoutActiveActivity.this,
+                        WorkoutHistoryActivity.class
+                )
+        ));
 
         showCurrentSet();
     }
 
+    private void showTargetEditor() {
+        if (workoutCompleted || isResting) {
+            return;
+        }
+
+        LinearLayout fields = new LinearLayout(this);
+        fields.setOrientation(LinearLayout.VERTICAL);
+
+        int pad = (int) (16 * getResources()
+                .getDisplayMetrics().density);
+
+        fields.setPadding(pad, pad, pad, pad);
+
+        EditText setsInput = new EditText(this);
+        setsInput.setHint("Number of sets (1–10)");
+        setsInput.setInputType(InputType.TYPE_CLASS_NUMBER);
+        setsInput.setText(String.valueOf(totalSets));
+
+        EditText repsInput = new EditText(this);
+        repsInput.setHint(
+                timeBasedWorkout
+                        ? "Duration in seconds per set"
+                        : "Reps per set (1–100)"
+        );
+        repsInput.setInputType(InputType.TYPE_CLASS_NUMBER);
+        repsInput.setText(String.valueOf(repsPerSet));
+
+        fields.addView(setsInput);
+        fields.addView(repsInput);
+
+        new AlertDialog.Builder(this)
+                .setTitle("Edit workout target")
+                .setMessage("Update your target before continuing.")
+                .setView(fields)
+                .setNegativeButton("Cancel", null)
+                .setPositiveButton("Save", (dialog, which) -> {
+                    try {
+                        int sets = Integer.parseInt(
+                                setsInput.getText().toString().trim()
+                        );
+
+                        int target = Integer.parseInt(
+                                repsInput.getText().toString().trim()
+                        );
+
+                        if (sets < 1 || sets > 10
+                                || target < 1 || target > 100) {
+
+                            Toast.makeText(
+                                    this,
+                                    "Sets must be 1–10 and target 1–100.",
+                                    Toast.LENGTH_LONG
+                            ).show();
+
+                            return;
+                        }
+
+                        totalSets = sets;
+                        repsPerSet = target;
+                        currentSet = 1;
+                        completedSets = 0;
+                        currentSetReps = 0;
+
+                        showCurrentSet();
+
+                    } catch (NumberFormatException e) {
+                        Toast.makeText(
+                                this,
+                                "Enter valid numbers.",
+                                Toast.LENGTH_SHORT
+                        ).show();
+                    }
+                })
+                .show();
+    }
+
     private void showCurrentSet() {
-        if (currentSet > TOTAL_SETS) {
+        if (currentSet > totalSets) {
             showWorkoutComplete();
             return;
         }
@@ -107,16 +302,28 @@ public class WorkoutActiveActivity extends AppCompatActivity {
             countDownTimer = null;
         }
 
-        progressTimer.setMax(REPS_PER_SET);
+        currentSetReps = 0;
+
+        progressTimer.setMax(repsPerSet);
         progressTimer.setProgress(0);
 
         tvTimerCount.setText("Set " + currentSet);
+
         tvRepLabel.setText(
-                "Complete " + REPS_PER_SET + " reps with controlled form."
+                "Target: " + totalSets + " sets × " + repsPerSet
+                        + (timeBasedWorkout ? " seconds" : " reps")
+                        + "\nTap here to edit target."
         );
 
-        btnFinishActive.setText("Complete Set");
         btnFinishActive.setEnabled(true);
+
+        btnFinishActive.setText(
+                timeBasedWorkout
+                        ? "Start Camera & Timer"
+                        : cameraWorkout
+                          ? "Start Camera & Count"
+                          : "Complete Set"
+        );
     }
 
     private void onWorkoutButtonClick() {
@@ -135,42 +342,86 @@ public class WorkoutActiveActivity extends AppCompatActivity {
             return;
         }
 
-        if (currentSet < TOTAL_SETS) {
-            startRestTimer();
-        } else {
-            currentSet++;
+        if (timeBasedWorkout || cameraWorkout) {
+            launchPostureCamera();
+            return;
+        }
+
+        currentSetReps = repsPerSet;
+        completeCurrentSet();
+    }
+
+    private void launchPostureCamera() {
+        btnFinishActive.setEnabled(false);
+
+        Intent intent = new Intent(
+                this,
+                PostureDetectionActivity.class
+        );
+
+        intent.putExtra("exerciseName", exerciseName);
+        intent.putExtra("target_reps", repsPerSet);
+        intent.putExtra("current_set", currentSet);
+        intent.putExtra("time_based", timeBasedWorkout);
+
+        // Send 60 seconds for timer-based exercises.
+        intent.putExtra(
+                "target_duration_seconds",
+                timeBasedWorkout
+                        ? DEFAULT_TIMER_SECONDS
+                        : repsPerSet
+        );
+
+        postureLauncher.launch(intent);
+    }
+
+    private void completeCurrentSet() {
+        completedSets++;
+
+        if (currentSet >= totalSets) {
+            currentSet = totalSets + 1;
             showWorkoutComplete();
+        } else {
+            startRestTimer();
         }
     }
 
     private void startRestTimer() {
         isResting = true;
-
-        if (countDownTimer != null) {
-            countDownTimer.cancel();
-        }
+        btnFinishActive.setEnabled(true);
 
         progressTimer.setMax(REST_SECONDS);
         progressTimer.setProgress(0);
 
         tvRepLabel.setText(
-                "Set " + currentSet + " completed. Rest before your next set."
+                "Set " + currentSet
+                        + " completed. Rest before your next set."
         );
-        tvTimerCount.setText(
-                String.format(Locale.getDefault(), "00:%02d", REST_SECONDS)
-        );
+
+        tvTimerCount.setText(String.format(
+                Locale.getDefault(),
+                "00:%02d",
+                REST_SECONDS
+        ));
+
         btnFinishActive.setText("Skip Rest");
 
         countDownTimer = new CountDownTimer(
-                REST_SECONDS * 1000L, 1000
+                REST_SECONDS * 1000L,
+                1000
         ) {
             @Override
             public void onTick(long millisUntilFinished) {
-                int seconds = (int) Math.ceil(millisUntilFinished / 1000.0);
-
-                tvTimerCount.setText(
-                        String.format(Locale.getDefault(), "00:%02d", seconds)
+                int seconds = (int) Math.ceil(
+                        millisUntilFinished / 1000.0
                 );
+
+                tvTimerCount.setText(String.format(
+                        Locale.getDefault(),
+                        "00:%02d",
+                        seconds
+                ));
+
                 progressTimer.setProgress(REST_SECONDS - seconds);
             }
 
@@ -179,12 +430,6 @@ public class WorkoutActiveActivity extends AppCompatActivity {
                 countDownTimer = null;
                 currentSet++;
                 showCurrentSet();
-
-                Toast.makeText(
-                        WorkoutActiveActivity.this,
-                        "Rest finished. Start your next set!",
-                        Toast.LENGTH_SHORT
-                ).show();
             }
         }.start();
     }
@@ -217,9 +462,10 @@ public class WorkoutActiveActivity extends AppCompatActivity {
 
         tvMotivationFeedback.setText(
                 exerciseName + "\n\n"
-                        + "Sets completed: " + TOTAL_SETS + "\n"
-                        + "Target reps per set: " + REPS_PER_SET + "\n\n"
-                        + feedback
+                        + "Sets completed: " + completedSets + "\n"
+                        + "Target per set: " + repsPerSet
+                        + (timeBasedWorkout ? " seconds" : " reps")
+                        + "\n\n" + feedback
         );
 
         btnViewHistory.setEnabled(false);
@@ -232,29 +478,49 @@ public class WorkoutActiveActivity extends AppCompatActivity {
         if (historySaveStarted) {
             return;
         }
+
         historySaveStarted = true;
 
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             btnViewHistory.setText("History Unavailable");
+
             Toast.makeText(
                     this,
                     "Please sign in to save workout history.",
                     Toast.LENGTH_LONG
             ).show();
+
             return;
         }
 
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String uid = FirebaseAuth.getInstance()
+                .getCurrentUser()
+                .getUid();
 
-        long durationSeconds = Math.max(1, (System.currentTimeMillis() - workoutStartTimeMs) / 1000);
+        long durationSeconds = Math.max(
+                1,
+                (System.currentTimeMillis() - workoutStartTimeMs) / 1000
+        );
 
         Map<String, Object> workout = new HashMap<>();
+
         workout.put("exerciseName", exerciseName);
-        workout.put("setsCompleted", TOTAL_SETS);
-        workout.put("repsPerSet", REPS_PER_SET);
+        workout.put("setsTarget", totalSets);
+        workout.put("setsCompleted", completedSets);
+        workout.put("repsPerSet", repsPerSet);
+        workout.put("timeBased", timeBasedWorkout);
         workout.put("durationSeconds", durationSeconds);
-        workout.put("completed", true);
+        workout.put("completed", completedSets == totalSets);
         workout.put("completedAt", FieldValue.serverTimestamp());
+
+        // Average frame-based posture score across camera-checked sets.
+        // If no valid posture frames were evaluated, store 0 and the set count.
+        int averagePostureAccuracy = postureAccuracySets > 0
+                ? Math.round((float) postureAccuracyTotal / postureAccuracySets)
+                : 0;
+        workout.put("postureAccuracy", averagePostureAccuracy);
+        workout.put("postureAccuracySets", postureAccuracySets);
+        workout.put("postureAccuracyType", "frame_based_estimate");
 
         FirebaseFirestore.getInstance()
                 .collection("users")
@@ -303,6 +569,8 @@ public class WorkoutActiveActivity extends AppCompatActivity {
             countDownTimer.cancel();
             countDownTimer = null;
         }
+
         super.onDestroy();
     }
 }
+

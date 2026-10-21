@@ -1,359 +1,240 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
 
     <LinearLayout
-
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         android:orientation="vertical"
-
         android:padding="20dp">
 
-
-        <!-- ========================================= -->
         <!-- TITLE -->
-        <!-- ========================================= -->
-
         <TextView
-
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:text="Edit Profile"
-
             android:textSize="28sp"
             android:textStyle="bold"
-
             android:textColor="?attr/colorOnBackground"
-
             android:layout_marginBottom="24dp" />
 
+        <!-- PROFILE PHOTO -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginBottom="24dp">
 
-        <!-- ========================================= -->
+            <ImageView
+                android:id="@+id/iv_profile_photo"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:src="@mipmap/ic_launcher"
+                android:scaleType="centerCrop"
+                android:contentDescription="Profile photo"
+                android:background="@android:color/darker_gray" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_select_profile_photo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Choose Profile Photo" />
+        </LinearLayout>
+
         <!-- FULL NAME -->
-        <!-- ========================================= -->
-
         <com.google.android.material.textfield.TextInputLayout
-
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:hint="Full Name"
-
             android:layout_marginBottom="12dp"
-
             app:boxCornerRadiusTopStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp">
 
             <com.google.android.material.textfield.TextInputEditText
-
                 android:id="@+id/et_full_name"
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:inputType="textPersonName"
-
                 android:maxLines="1" />
-
         </com.google.android.material.textfield.TextInputLayout>
 
-
-        <!-- ========================================= -->
         <!-- USERNAME -->
-        <!-- ========================================= -->
-
         <com.google.android.material.textfield.TextInputLayout
-
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:hint="Username"
-
             android:layout_marginBottom="12dp"
-
             app:boxCornerRadiusTopStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp">
 
             <com.google.android.material.textfield.TextInputEditText
-
                 android:id="@+id/et_username"
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:inputType="text"
-
                 android:maxLines="1" />
-
         </com.google.android.material.textfield.TextInputLayout>
 
-
-        <!-- ========================================= -->
         <!-- DATE OF BIRTH -->
-        <!-- ========================================= -->
-
         <com.google.android.material.textfield.TextInputLayout
-
             android:id="@+id/layout_dob"
-
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:hint="Date of Birth"
-
             android:layout_marginBottom="12dp"
-
             app:boxCornerRadiusTopStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp">
 
             <com.google.android.material.textfield.TextInputEditText
-
                 android:id="@+id/et_dob"
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:inputType="none"
-
                 android:focusable="false"
                 android:clickable="true"
-
                 android:maxLines="1"
-
                 android:hint="Select date of birth" />
-
         </com.google.android.material.textfield.TextInputLayout>
 
-
-        <!-- ========================================= -->
         <!-- AGE -->
-        <!-- ========================================= -->
-
         <com.google.android.material.textfield.TextInputLayout
-
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:hint="Age"
-
             android:layout_marginBottom="12dp"
-
             app:boxCornerRadiusTopStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp">
 
             <com.google.android.material.textfield.TextInputEditText
-
                 android:id="@+id/et_age"
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:inputType="number"
-
                 android:focusable="false"
                 android:clickable="false"
-
                 android:maxLines="1" />
-
         </com.google.android.material.textfield.TextInputLayout>
 
-
-        <!-- ========================================= -->
         <!-- GENDER -->
-        <!-- ========================================= -->
-
         <com.google.android.material.textfield.TextInputLayout
-
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:hint="Gender"
-
             android:layout_marginBottom="12dp"
-
             app:boxCornerRadiusTopStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp">
 
             <com.google.android.material.textfield.MaterialAutoCompleteTextView
-
                 android:id="@+id/act_gender"
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:inputType="none"
-
                 android:padding="16dp" />
-
         </com.google.android.material.textfield.TextInputLayout>
 
-
-        <!-- ========================================= -->
         <!-- HEIGHT -->
-        <!-- ========================================= -->
-
         <com.google.android.material.textfield.TextInputLayout
-
+            android:id="@+id/til_height"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:hint="Height (cm)"
-
             android:layout_marginBottom="12dp"
-
             app:boxCornerRadiusTopStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp">
 
             <com.google.android.material.textfield.TextInputEditText
-
                 android:id="@+id/et_height"
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:inputType="numberDecimal"
-
                 android:maxLines="1" />
-
         </com.google.android.material.textfield.TextInputLayout>
 
-
-        <!-- ========================================= -->
         <!-- WEIGHT -->
-        <!-- ========================================= -->
-
         <com.google.android.material.textfield.TextInputLayout
-
+            android:id="@+id/til_weight"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:hint="Weight (kg)"
-
             android:layout_marginBottom="12dp"
-
             app:boxCornerRadiusTopStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp">
 
             <com.google.android.material.textfield.TextInputEditText
-
                 android:id="@+id/et_weight"
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:inputType="numberDecimal"
-
                 android:maxLines="1" />
-
         </com.google.android.material.textfield.TextInputLayout>
 
-
-        <!-- ========================================= -->
         <!-- DAILY STEP GOAL -->
-        <!-- ========================================= -->
-
         <com.google.android.material.textfield.TextInputLayout
-
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:hint="Daily Step Goal"
-
             android:layout_marginBottom="12dp"
-
             app:boxCornerRadiusTopStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp">
 
             <com.google.android.material.textfield.TextInputEditText
-
                 android:id="@+id/et_step_goal"
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:inputType="number"
-
                 android:maxLines="1" />
-
         </com.google.android.material.textfield.TextInputLayout>
 
-
-        <!-- ========================================= -->
         <!-- DAILY CALORIES GOAL -->
-        <!-- ========================================= -->
-
         <com.google.android.material.textfield.TextInputLayout
-
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:hint="Daily Calories Goal"
-
             android:layout_marginBottom="24dp"
-
             app:boxCornerRadiusTopStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp">
 
             <com.google.android.material.textfield.TextInputEditText
-
                 android:id="@+id/et_calorie_goal"
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:inputType="number"
-
                 android:maxLines="1" />
-
         </com.google.android.material.textfield.TextInputLayout>
 
-
-        <!-- ========================================= -->
         <!-- SAVE BUTTON -->
-        <!-- ========================================= -->
-
         <com.google.android.material.button.MaterialButton
-
             android:id="@+id/btn_save_profile"
-
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:text="Save Profile"
-
             android:textSize="16sp"
             android:textStyle="bold"
-
             android:padding="14dp"
-
             app:cornerRadius="12dp" />
 
     </LinearLayout>
-
 </ScrollView>

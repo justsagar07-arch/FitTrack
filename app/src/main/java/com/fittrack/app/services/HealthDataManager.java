@@ -9,6 +9,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.HashMap;
+import java.util.Locale;
+
 public class HealthDataManager {
 
     private static final String TAG = "FitTrackHealthData";
@@ -170,8 +173,8 @@ public class HealthDataManager {
 
         String userId = user.getUid();
 
-        java.util.HashMap<String, Object> healthData =
-                new java.util.HashMap<>();
+        HashMap<String, Object> healthData =
+                new HashMap<>();
 
         healthData.put("userId", userId);
         healthData.put("project", "FitTrack");
@@ -204,8 +207,85 @@ public class HealthDataManager {
                 });
     }
 
-    // Callback
+    // Synchronize health data to Firestore with explicit callbacks for UI reporting
+    public void syncHealthData(HealthSyncCallback callback) {
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+
+        if (user == null) {
+            if (callback != null) {
+                callback.onFailure("No logged in user found. Please sign in.");
+            }
+            return;
+        }
+
+        if (!healthConnectManager.isAvailable()) {
+            // Attempt fallback to local daily step manager if available
+            DailyStepManager dailyStepManager = new DailyStepManager(context);
+            long baseline = dailyStepManager.getBaseline();
+            if (baseline >= 0) {
+                long todaySteps = dailyStepManager.getTodaySteps(baseline);
+                int steps = (int) Math.min(todaySteps, Integer.MAX_VALUE);
+                int calories = CalorieCalculator.calculateCalories(steps);
+                saveDataToFirestore(user.getUid(), steps, calories, 0, callback,
+                        "Synced via Local Step Sensor (" + steps + " steps)");
+            } else {
+                if (callback != null) {
+                    callback.onFailure("Health Connect is unavailable on this device.");
+                }
+            }
+            return;
+        }
+
+        getTodayHealthData((steps, calories, heartRate) -> {
+            saveDataToFirestore(user.getUid(), steps, calories, heartRate, callback,
+                    String.format(Locale.getDefault(),
+                            "Success (%d steps, %d kcal, %d BPM)", steps, calories, heartRate));
+        });
+    }
+
+    private void saveDataToFirestore(
+            String userId,
+            int steps,
+            int calories,
+            int heartRate,
+            HealthSyncCallback callback,
+            String successSummary) {
+
+        HashMap<String, Object> healthData = new HashMap<>();
+        healthData.put("userId", userId);
+        healthData.put("project", "FitTrack");
+        healthData.put("steps", steps);
+        healthData.put("calories", calories);
+        healthData.put("heartRate", heartRate);
+        healthData.put("heartRateUnit", "BPM");
+        healthData.put("timestamp", System.currentTimeMillis());
+
+        db.collection("users")
+                .document(userId)
+                .collection("activity")
+                .document("today")
+                .set(healthData)
+                .addOnSuccessListener(unused -> {
+                    Log.d(TAG, "Activity saved to Firestore successfully");
+                    if (callback != null) {
+                        callback.onSuccess(steps, calories, heartRate, successSummary);
+                    }
+                })
+                .addOnFailureListener(error -> {
+                    Log.e(TAG, "Firestore save error", error);
+                    if (callback != null) {
+                        callback.onFailure("Firestore save error: " + error.getMessage());
+                    }
+                });
+    }
+
+    // Callbacks
     public interface OnHealthDataLoadedListener {
         void onDataLoaded(int steps, int calories, int heartRate);
+    }
+
+    public interface HealthSyncCallback {
+        void onSuccess(int steps, int calories, int heartRate, String summary);
+        void onFailure(String errorMessage);
     }
 }

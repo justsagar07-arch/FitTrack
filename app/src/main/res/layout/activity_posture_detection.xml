@@ -5,25 +5,25 @@
     android:layout_height="match_parent"
     android:background="@color/black">
 
-    <!-- Live Camera Feed Preview -->
+    <!-- Live Camera Preview -->
     <androidx.camera.view.PreviewView
         android:id="@+id/posture_preview_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <!-- Custom Skeleton Vector Tracking View Layer -->
+    <!-- Live Pose Skeleton Overlay -->
     <com.fittrack.app.views.OverlayView
         android:id="@+id/skeleton_overlay_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <!-- Floating Top Header Bar -->
+    <!-- Top Header -->
     <LinearLayout
         android:id="@+id/layout_posture_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="16dp"
+        android:padding="12dp"
         android:background="#A6000000"
         android:gravity="center_vertical"
         android:layout_alignParentTop="true">
@@ -35,14 +35,14 @@
             android:src="@drawable/ic_person"
             android:background="?attr/selectableItemBackgroundBorderless"
             app:tint="@color/white"
-            android:importantForAccessibility="yes"
-            android:contentDescription="Go Back"/>
+            android:contentDescription="Go Back" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:orientation="vertical"
-            android:layout_marginStart="16dp">
+            android:layout_marginStart="12dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -50,7 +50,7 @@
                 android:text="AI Real-Time Posture Detection"
                 android:textColor="@color/white"
                 android:textSize="16sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/text_exercise_name"
@@ -59,12 +59,26 @@
                 android:text="Current Exercise: Squats"
                 android:textColor="@color/accent_green"
                 android:textSize="13sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
+
         </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btn_switch_camera"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@android:drawable/ic_menu_camera"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="8dp"
+            app:tint="@color/white"
+            android:contentDescription="Switch front and back camera"
+            android:tooltipText="Switch camera" />
+
     </LinearLayout>
 
-    <!-- Bottom Real-Time AI Feedback Box -->
+    <!-- Bottom Feedback and Rep Counter Card -->
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_feedback"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -73,8 +87,7 @@
         app:cardElevation="6dp"
         app:cardBackgroundColor="#CC1E1E1E"
         app:strokeWidth="1.5dp"
-        app:strokeColor="@color/accent_green"
-        android:id="@+id/card_feedback">
+        app:strokeColor="@color/accent_green">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -91,33 +104,60 @@
                 android:textSize="11sp"
                 android:textStyle="bold"
                 android:letterSpacing="0.1"
-                android:layout_marginBottom="6dp"/>
+                android:layout_marginBottom="6dp" />
 
             <TextView
                 android:id="@+id/text_posture_feedback"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Correct Posture"
+                android:text="Waiting for pose..."
                 android:textColor="@color/accent_green"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:gravity="center"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="12dp" />
+
+            <!-- Rep Counter -->
+            <TextView
+                android:id="@+id/text_rep_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="REPS: 0"
+                android:textColor="@color/accent_green"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Live Posture Accuracy -->
+            <TextView
+                android:id="@+id/text_posture_accuracy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="POSTURE ACCURACY: 0%"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_marginBottom="12dp" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="#44FFFFFF"
-                android:layout_marginBottom="12dp"/>
+                android:layout_marginBottom="12dp" />
 
             <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/text_posture_instruction"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Keep your knees tracking over your feet and push hips back down."
+                android:text="Keep your body aligned and perform the exercise with controlled movement."
                 android:textColor="@color/white"
                 android:textSize="13sp"
-                android:gravity="center"/>
+                android:gravity="center" />
+
         </LinearLayout>
+
     </com.google.android.material.card.MaterialCardView>
 
 </RelativeLayout>
